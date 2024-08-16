@@ -1,0 +1,125 @@
+[
+    {
+      "image": "/images/keyboard1.png",
+      "hoverImage": "/images/keyboard1-1.png",
+      "text": "몬스타기어 YAONG67 야옹67 아크릴 키보드",
+      "price": 139000,
+      "text2": "고양이 형태의 아크릴 키보드",
+      "color": "#955377",
+      "details": [
+        "고양이 형태의 아크릴 키보드",
+        "유선 전용",
+        "풀 아크릴 하우징 (적층) & 클리어, 화이트 색상",
+        "LED 지원",
+        "65배열",
+        "핫스왑&솔더링"
+      ]
+    },
+    {
+      "image": "/images/keyboard2.png",
+      "hoverImage": "/images/keyboard2-1.png",
+      "text": "몬스타기어 닌자87PRO ALU 스페셜 에디션 풀알루미늄 커스텀 키보드",
+      "price": 250000,
+      "text2": "닌자87PRO ALU 에디션",
+      "color": "#6551a1",
+      "details": [
+        "텐키리스 배열",
+        "F13키 & 노브 (추가옵션)",
+        "화이트, 블랙, 핑크, 퍼플으로 4종 출시",
+        "유선&무선&블루투스 지원",
+        "가스켓 마운트",
+        "4000mAh 대용량 배터리"
+      ]
+    },
+    {
+      "image": "/images/keyboard3.png",
+      "hoverImage": "/images/keyboard3-1.png",
+      "text": "[공장풀윤활] 몬스타기어 닌자96PRO LCD (Ver.게이트론)",
+      "price": 169000,
+      "text2": "[공장풀윤활] 닌자96PRO LCD (Ver.게이트론)",
+      "color": "#7ca65b",
+      "details": [
+        "유선/블루투스/무선2.4GHz 지원",
+        "RGB LED 모드 지원",
+        "전용 소프트웨어 펌웨어 지원",
+        "LCD 액정화면",
+        "3D 실리콘 기보강 차음 패드 탑재",
+        "스위치 3핀부터 5핀까지 다양하게 지원"
+      ]
+    },
+    {
+      "image": "/images/keyboard4.png",
+      "hoverImage": "/images/keyboard4-1.png",
+      "text": "[수제풀윤활] 몬스타기어 닌자 104PRO LCD (Ver.게이트론)",
+      "price": 199000,
+      "text2": "[수제풀윤활] 닌자104PRO LCD (Ver.게이트론)",
+      "color": "#7ca65b",
+      "details": [
+        "유선/블루투스/무선2.4GHz 지원",
+        "RGB LED 모드 지원",
+        "전용 소프트웨어 펌웨어 지원",
+        "LCD 액정화면 & 노브",
+        "정방향 핫스왑 기판 적용",
+        "3D 실리콘 기보강 차음 패드 탑재"
+      ]
+    },
+    {
+      "image": "/images/keyboard5.png",
+      "hoverImage": "/images/keyboard5-1.png",
+      "text": "몬스타기어 MK84S 미니키보드",
+      "price": 87000,
+      "text2": "MK84S",
+      "color": "#86fa4f",
+      "details": [
+        "유무선 가능 (유선/블루투스5.0/무선2.4Ghz)",
+        "스위치: 오테뮤 로우 프로파일 적축",
+        "키캡 : 달토끼 PBT 이중사출",
+        "솔더링",
+        "84키",
+        "RGB LED"
+      ]
+    },
+    {
+      "image": "/images/keyboard6.png",
+      "hoverImage": "/images/keyboard6-1.png",
+      "text": "[공장풀윤활] 몬스타기어 닌자 108PRO RGB (Ver.일반 스위치)",
+      "price": 160000,
+      "text2": "닌자 108PRO",
+      "color": "#4c4c4c",
+      "details": [
+        "유선/블루투스/무선2.4GHz 지원",
+        "정방향 핫스왑 기판 적용",
+        "3D 실리콘 기보강 패드와 묵직한 실리콘 하부 흡음재로 잡소리까지 완벽하게 차단"
+      ]
+    },
+    {
+      "image": "/images/keyboard7.png",
+      "hoverImage": "/images/keyboard7-1.png",
+      "text": "몬스타기어 네모67 커스텀 키보드",
+      "price": 159000,
+      "text2": "몬스타기어 NEMO67",
+      "color": "#4c4c4c",
+      "details": [
+        "6063 알루미늄",
+        "가스켓 마운트",
+        "스위치 RGB",
+        "PC보강판",
+        "VIA 호환 가능",
+        "스테인리스 스틸 무게추"
+      ]
+    },
+    {
+      "image": "/images/keyboard8.png",
+      "hoverImage": "/images/keyboard8-1.png",
+      "text": "FEKER 앨리스98 LCD 키보드",
+      "price": 220000,
+      "text2": "FEKER 앨리스98 LCD 키보드 베이직레트로",
+      "color": "#a26325",
+      "details": [
+        "앨리스98은 키보드를 사용할 때",
+        "사용자의 손목 피로도를 줄여주는 특수한 배열로 디자인 되어있어",
+        "보다 편안하게 타건 할 수 있습니다."
+      ]
+    }
+  ]
+  
