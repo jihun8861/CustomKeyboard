@@ -8,7 +8,6 @@ import { FaArrowRotateRight } from "react-icons/fa6";
 import { FaRegHeart } from "react-icons/fa";
 import { useSpring, animated as a } from "@react-spring/three";
 import { useSpring as useSpringCss, animated } from "@react-spring/web";
-import { ChromePicker } from "react-color"; // 추가된 부분
 
 const Container = styled.div`
   width: 100%;
@@ -19,7 +18,7 @@ const Container = styled.div`
 
 const Frame = styled.div`
   width: 100%;
-  height: calc(100% - 100px); /* 헤더를 제외한 나머지 높이 사용 */
+  height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -176,7 +175,7 @@ const ColorFrame = styled.div`
   width: 100%;
   height: 120px;
   display: flex;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
 `;
@@ -187,19 +186,17 @@ const ColorBox = styled.div`
   cursor: pointer;
 `;
 
-const CustomColorPicker = styled.div`
-  flex: 1;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-`;
 
-const Model = ({ showSwitch, showKeyCap, controlsRef, keycapColor, setKeycapColor }) => {
+const Model = ({
+  showSwitch,
+  showKeyCap,
+  controlsRef,
+  keycapColor,
+  setKeycapColor,
+}) => {
   const { scene: bareboneScene } = useGLTF("/models/barebone100.glb");
   const { scene: switchScene } = useGLTF("/models/switch100.glb");
-  const { scene: keycapScene } = useGLTF("/models/keycaps100.glb");
+  const { scene: keycapScene } = useGLTF("/models/key100test.glb");
 
   // Load the partial keycap models
   const { scene: keycap1Scene } = useGLTF("/models/100key2.glb");
@@ -263,8 +260,6 @@ const CustomContent = () => {
   const controlsRef = useRef();
   const [showModal, setShowModal] = useState(true);
   const [keycapColor, setKeycapColor] = useState("white");
-  const [customColor, setCustomColor] = useState("#000000"); // 사용자 정의 색상
-  const [displayColorPicker, setDisplayColorPicker] = useState(false); // 색상 선택기 표시 여부
 
   const modalSpring = useSpringCss({
     opacity: showModal ? 1 : 0,
@@ -308,15 +303,18 @@ const CustomContent = () => {
     setKeycapColor(color);
   };
 
-  const handleCustomColorChange = (color) => {
-    setCustomColor(color.hex);
-  };
-
-  const toggleColorPicker = () => {
-    setDisplayColorPicker(!displayColorPicker);
-  };
-
-  const colors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "gray"];
+  const colors = [
+    "red",
+    "blue",
+    "green",
+    "yellow",
+    "purple",
+    "orange",
+    "pink",
+    "brown",
+    "gray",
+    "black", // Black added to colors array
+  ];
 
   return (
     <Container>
@@ -329,11 +327,7 @@ const CustomContent = () => {
             <ReturnIcon />
             다시 시작하기
           </RightBox>
-          <RightBox>
-            <HeartIcon />
-            저장하기
-          </RightBox>
-          <PriceBtn />
+          <PriceBtn><HeartIcon />저장하기</PriceBtn>
         </RightBoxContainer>
       </HeaderFrame>
 
@@ -347,9 +341,6 @@ const CustomContent = () => {
             >
               KeyCap
             </SelectText>
-            <SelectText onClick={() => handleColorChange("red")}>
-              Red Color
-            </SelectText>
           </MainSelect>
 
           {showModal && (
@@ -361,61 +352,55 @@ const CustomContent = () => {
             </ModalOverlay>
           )}
 
-<Canvas
-  camera={{ position: [10, 100, 100], fov: 60 }}
-  style={{ width: "100%", height: "100%" }}
-  shadows
->
-  <OrbitControls
-    ref={controlsRef}
-    target={[10, 0, 0]}
-    enablePan={false}
-    enableZoom={true}
-    zoomSpeed={0.15}
-    minDistance={110}
-    maxDistance={130}
-    enableRotate={true}
-    rotateSpeed={0.3}
-    minPolarAngle={0}
-    maxPolarAngle={Math.PI / 2}
-  />
+          <Canvas
+            camera={{ position: [10, 100, 100], fov: 60 }}
+            style={{ width: "100%", height: "100%" }}
+            shadows
+          >
+            <OrbitControls
+              ref={controlsRef}
+              target={[10, 0, 0]}
+              enablePan={false}
+              enableZoom={true}
+              zoomSpeed={0.15}
+              minDistance={110}
+              maxDistance={130}
+              enableRotate={true}
+              rotateSpeed={0.3}
+              minPolarAngle={0}
+              maxPolarAngle={Math.PI / 2}
+            />
 
-  {/* Increase the ambient light for overall brightness */}
-  <ambientLight intensity={2.0} />
+            <ambientLight intensity={2.0} />
 
-  {/* Stronger directional lights from multiple angles */}
-  <directionalLight
-    position={[30, 50, 30]}
-    intensity={2.5}
-    castShadow
-    shadow-mapSize-width={2048}
-    shadow-mapSize-height={2048}
-    shadow-camera-far={50}
-    shadow-camera-left={-20}
-    shadow-camera-right={20}
-    shadow-camera-top={20}
-    shadow-camera-bottom={-20}
-  />
+            <directionalLight
+              position={[30, 50, 30]}
+              intensity={2.5}
+              castShadow
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+              shadow-camera-far={50}
+              shadow-camera-left={-20}
+              shadow-camera-right={20}
+              shadow-camera-top={20}
+              shadow-camera-bottom={-20}
+            />
 
-  <directionalLight position={[-30, 50, -30]} intensity={2.0} />
-  <directionalLight position={[0, 30, -50]} intensity={1.8} />
+            <directionalLight position={[-30, 50, -30]} intensity={2.0} />
+            <directionalLight position={[0, 30, -50]} intensity={1.8} />
 
-  {/* Brighter point lights to focus directly on the keycaps */}
-  <pointLight position={[0, 50, 0]} intensity={1.5} />
-  <pointLight position={[-50, 50, 50]} intensity={1.5} />
-  <pointLight position={[50, 50, -50]} intensity={1.5} />
+            <pointLight position={[0, 50, 0]} intensity={1.5} />
+            <pointLight position={[-50, 50, 50]} intensity={1.5} />
+            <pointLight position={[50, 50, -50]} intensity={1.5} />
 
-  {/* Model */}
-  <Model
-    showSwitch={showSwitch}
-    showKeyCap={showKeyCap}
-    controlsRef={controlsRef}
-    keycapColor={keycapColor}
-    setKeycapColor={setKeycapColor}
-  />
-</Canvas>
-
-
+            <Model
+              showSwitch={showSwitch}
+              showKeyCap={showKeyCap}
+              controlsRef={controlsRef}
+              keycapColor={keycapColor}
+              setKeycapColor={setKeycapColor}
+            />
+          </Canvas>
         </MainFrame>
         <ColorFrame>
           {colors.map((color, index) => (
@@ -425,28 +410,6 @@ const CustomContent = () => {
               onClick={() => handleColorChange(color)}
             />
           ))}
-
-          {/* Custom color picker */}
-          <CustomColorPicker onClick={toggleColorPicker}>
-            {displayColorPicker && (
-              <div style={{ position: "absolute", zIndex: 2, bottom: "130%" }}>
-                <ChromePicker color={customColor} onChange={handleCustomColorChange} />
-                <button
-                  style={{
-                    marginTop: "10px",
-                    padding: "5px",
-                    width: "100%",
-                    backgroundColor: customColor,
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleColorChange(customColor)}
-                >
-                  Apply Color
-                </button>
-              </div>
-            )}
-          </CustomColorPicker>
         </ColorFrame>
       </Frame>
     </Container>

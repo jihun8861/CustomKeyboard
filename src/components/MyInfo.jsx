@@ -68,11 +68,6 @@ const InfoBox = styled.div`
   align-items: center;
 `;
 
-const SocialIcon = styled.img`
-  width: 28px;
-  height: 28px;
-`;
-
 const InfoText = styled.div`
   color: #656565;
   font-size: 18px;
@@ -312,10 +307,6 @@ const MyInfo = () => {
             <UserIcon src="/images/user.svg" alt="User Icon" />
           </Header>
           <Main>
-            <InfoFrame>
-              <InfoTitle>연결된 소셜계정</InfoTitle>
-              <SocialIcon />
-            </InfoFrame>
 
             <InfoFrame>
               <InfoTitle>이름</InfoTitle>

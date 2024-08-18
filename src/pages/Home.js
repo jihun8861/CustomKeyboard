@@ -4,7 +4,6 @@ import styled, { keyframes} from "styled-components";
 import Layout from "../components/Layout";
 import keyboards from '../json/keyboards.json';
 import TextFrame from "../components/TextFrame";
-import ItemFrame1 from "../components/ItemFrame1";
 import ItemFrame2 from "../components/ItemFrame2";
 import ItemFrame3 from "../components/ItemFrame3";
 import { MdArrowForwardIos, MdArrowBackIosNew } from "react-icons/md";
@@ -113,13 +112,7 @@ const HomeContent = () => {
   const [slideDirection, setSlideDirection] = useState(null);
   const itemsPerPage = 4;
   const totalPages = Math.ceil(keyboards.length / itemsPerPage);
-
-  const items1 = [
-    { image: "/images/test0.jpg", text: "Test 1" },
-    { image: "/images/test0.jpg", text: "Test 2" },
-    { image: "/images/test0.jpg", text: "Test 3" },
-  ];
-
+  
   useEffect(() => {
     if (slideDirection) {
       const timeout = setTimeout(() => {
