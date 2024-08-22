@@ -81,8 +81,8 @@ const ImageText = styled.div`
 const CustomSelectContent = () => {
   const navigate = useNavigate();
 
-  const handleClick = (text) => {
-    navigate("/custom", { state: { text } });
+  const handleClick = (keyboardType) => {
+    navigate("/custom", { state: { keyboardType } });
   };
 
   return (
@@ -91,15 +91,15 @@ const CustomSelectContent = () => {
         <TitleText>3D Custom</TitleText>
         <KeyboardFrame>
           <Keyboard>
-            <ItemFrame onClick={() => handleClick("60% Keyboard")}>
+            <ItemFrame onClick={() => handleClick("60")}>
               <Image>60% 베어본 이미지</Image>
               <ImageText>60% Keyboard</ImageText>
             </ItemFrame>
-            <ItemFrame onClick={() => handleClick("80% Keyboard")}>
+            <ItemFrame onClick={() => handleClick("80")}>
               <Image>80% 베어본 이미지</Image>
               <ImageText>80% Keyboard</ImageText>
             </ItemFrame>
-            <ItemFrame onClick={() => handleClick("100% Keyboard")}>
+            <ItemFrame onClick={() => handleClick("100")}>
               <Image>100% 베어본 이미지</Image>
               <ImageText>100% Keyboard</ImageText>
             </ItemFrame>

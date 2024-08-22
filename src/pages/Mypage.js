@@ -18,7 +18,7 @@ const Container = styled.div`
 `;
 
 const Frame = styled.div`
-  width: 85%;
+  width: 90%;
   height: auto;
 `;
 
@@ -31,8 +31,8 @@ const HeaderListFrame = styled.div`
 `;
 
 const HeaderList = styled.div`
-  width: 230px;
-  height: 90px;
+  width: 200px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;

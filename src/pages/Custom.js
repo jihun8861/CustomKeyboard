@@ -5,7 +5,8 @@ import styled from "styled-components";
 import { useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
 import { FaArrowRotateRight } from "react-icons/fa6";
-import { FaRegHeart } from "react-icons/fa";
+import { GoDotFill } from "react-icons/go";
+import { FaRegHeart,FaCheck} from "react-icons/fa";
 import { useSpring, animated as a } from "@react-spring/three";
 import { useSpring as useSpringCss, animated } from "@react-spring/web";
 
@@ -14,6 +15,7 @@ const Container = styled.div`
   height: 750px;
   display: flex;
   flex-direction: column;
+  z-index: 100;
 `;
 
 const Frame = styled.div`
@@ -125,16 +127,34 @@ const MainSelect = styled.div`
   z-index: 10;
 `;
 
+const IconWrapper = styled.div`
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+`;
+
+const CheckIcon = styled(FaCheck)`
+  font-size: 20px;
+`
+
+const DotIcon = styled(GoDotFill)`
+font-size: 14px;
+color: black;
+`
+
 const SelectText = styled.div`
   width: 100%;
   height: 50px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding-left: 50px;
   font-size: 20px;
   font-weight: bold;
   cursor: pointer;
   z-index: 20;
+  color: ${({ isSelected }) => (isSelected ? "#6d8cff" : "#666666")}; // 선택된 상태일 때 색상 변경
+  position: relative;
 `;
 
 const ModalOverlay = styled(animated.div)`
@@ -173,7 +193,7 @@ const ModalText = styled.div`
 
 const ColorFrame = styled.div`
   width: 100%;
-  height: 120px;
+  height: 100px;
   display: flex;
   position: fixed;
   bottom: 0;
@@ -186,35 +206,32 @@ const ColorBox = styled.div`
   cursor: pointer;
 `;
 
-
 const Model = ({
   showSwitch,
   showKeyCap,
   controlsRef,
   keycapColor,
+  switchColor, // 새로운 props로 추가
   setKeycapColor,
+  setSwitchColor, // 새로운 props로 추가
 }) => {
-  const { scene: bareboneScene } = useGLTF("/models/barebone100.glb");
-  const { scene: switchScene } = useGLTF("/models/switch100.glb");
-  const { scene: keycapScene } = useGLTF("/models/key100test.glb");
+  const { scene: bareboneScene } = useGLTF("/models/100keyboard/barebone100.glb");
+  const { scene: switchScene } = useGLTF("/models/100keyboard/allswitch100.glb");
 
-  // Load the partial keycap models
-  const { scene: keycap1Scene } = useGLTF("/models/100key2.glb");
-  const { scene: keycap2Scene } = useGLTF("/models/100key1.glb");
+  // Load the partial switch models
+  const { scene: switch1Scene } = useGLTF("/models/100keyboard/100switch1.glb");
+  const { scene: switch2Scene } = useGLTF("/models/100keyboard/100switch2.glb");
+
+  const { scene: keycap1Scene } = useGLTF("/models/100keyboard/100keycaps2.glb");
+  const { scene: keycap2Scene } = useGLTF("/models/100keyboard/100keycaps1.glb");
 
   const groupRef = useRef();
 
-  bareboneScene.scale.set(350, 350, 350);
-  switchScene.scale.set(350, 350, 350);
-  keycapScene.scale.set(350, 350, 350);
-  keycap1Scene.scale.set(350, 350, 350);
-  keycap2Scene.scale.set(350, 350, 350);
-
-  bareboneScene.position.set(-40, 0, 0);
-  switchScene.position.set(-40, 0, 0);
-  keycapScene.position.set(-40, 0, 0);
-  keycap1Scene.position.set(-40, 0, 0);
-  keycap2Scene.position.set(-40, 0, 0);
+  // Apply the same transformations
+  [bareboneScene, switchScene, switch1Scene, switch2Scene, keycap1Scene, keycap2Scene].forEach(scene => {
+    scene.scale.set(350, 350, 350);
+    scene.position.set(-40, 0, 0);
+  });
 
   const switchSpring = useSpring({
     position: showSwitch ? [-40, 0, 0] : [-40, 50, 0],
@@ -235,11 +252,24 @@ const Model = ({
     });
   }, [keycapColor]);
 
+  // Apply color only to switch2Scene
+  useEffect(() => {
+    switch2Scene.traverse((child) => {
+      if (child.isMesh) {
+        child.material.color.set(switchColor);
+      }
+    });
+  }, [switchColor]);
+
   return (
     <group ref={groupRef} position={[-3, 0, 0]}>
       <primitive object={bareboneScene} />
       {showSwitch && (
-        <a.primitive object={switchScene} position={switchSpring.position} />
+        <>
+          <a.primitive object={switchScene} position={switchSpring.position} />
+          <a.primitive object={switch1Scene} position={switchSpring.position} />
+          <a.primitive object={switch2Scene} position={switchSpring.position} />
+        </>
       )}
       {showKeyCap && (
         <>
@@ -260,6 +290,7 @@ const CustomContent = () => {
   const controlsRef = useRef();
   const [showModal, setShowModal] = useState(true);
   const [keycapColor, setKeycapColor] = useState("white");
+  const [switchColor, setSwitchColor] = useState("white"); // 스위치 색상 상태 추가
 
   const modalSpring = useSpringCss({
     opacity: showModal ? 1 : 0,
@@ -287,7 +318,7 @@ const CustomContent = () => {
   const handleSwitchClick = () => {
     setShowSwitch(!showSwitch);
     if (!showSwitch) {
-      setShowKeyCap(false);
+      setShowKeyCap(false); // Switch가 선택되지 않으면 KeyCap을 비활성화
     }
   };
 
@@ -299,8 +330,12 @@ const CustomContent = () => {
     }
   };
 
-  const handleColorChange = (color) => {
+  const handleKeycapColorChange = (color) => {
     setKeycapColor(color);
+  };
+
+  const handleSwitchColorChange = (color) => {
+    setSwitchColor(color);
   };
 
   const colors = [
@@ -313,7 +348,7 @@ const CustomContent = () => {
     "pink",
     "brown",
     "gray",
-    "black", // Black added to colors array
+    "black",
   ];
 
   return (
@@ -334,12 +369,23 @@ const CustomContent = () => {
       <Frame>
         <MainFrame>
           <MainSelect>
-            <SelectText onClick={handleSwitchClick}>Switch</SelectText>
+            <SelectText onClick={handleSwitchClick} isSelected={showSwitch}>
+              Switch
+              <IconWrapper>
+                {showSwitch ? <CheckIcon /> : <DotIcon />}
+              </IconWrapper>
+            </SelectText>
             <SelectText
               onClick={handleKeyCapClick}
-              style={{ color: showSwitch ? "black" : "#ccc" }}
+              isSelected={showKeyCap && showSwitch}
+              style={{
+                color: showSwitch ? (showKeyCap ? "#6d8cff" : "#666666") : "#ccc",
+              }}
             >
               KeyCap
+              <IconWrapper>
+                {showKeyCap ? <CheckIcon /> : <DotIcon />}
+              </IconWrapper>
             </SelectText>
           </MainSelect>
 
@@ -398,16 +444,27 @@ const CustomContent = () => {
               showKeyCap={showKeyCap}
               controlsRef={controlsRef}
               keycapColor={keycapColor}
+              switchColor={switchColor} // 새로운 props 추가
               setKeycapColor={setKeycapColor}
+              setSwitchColor={setSwitchColor} // 새로운 props 추가
             />
           </Canvas>
         </MainFrame>
         <ColorFrame>
+          <p>Keycap Colors:</p>
           {colors.map((color, index) => (
             <ColorBox
               key={index}
               style={{ backgroundColor: color }}
-              onClick={() => handleColorChange(color)}
+              onClick={() => handleKeycapColorChange(color)}
+            />
+          ))}
+          <p>Switch Colors:</p>
+          {colors.map((color, index) => (
+            <ColorBox
+              key={index}
+              style={{ backgroundColor: color }}
+              onClick={() => handleSwitchColorChange(color)}
             />
           ))}
         </ColorFrame>

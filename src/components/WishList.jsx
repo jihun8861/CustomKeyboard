@@ -12,6 +12,7 @@ const MiniTextFrame = styled.div`
   height: 80px;
   display: flex;
   align-items: center;
+    margin-top: 20px;
 `;
 
 const NumberText = styled.div`
@@ -31,10 +32,8 @@ const FrameBox = styled.div`
   width: 22%;
   height: 430px;
   position: relative;
-  cursor: pointer;
   margin-bottom: 60px;
   margin-right: 4%;
-  border: solid 1px;
 
   &:nth-child(4n) {
     margin-right: 0;
@@ -48,6 +47,7 @@ const ImageFrame = styled.div`
   border-radius: 5px;
   background-image: url("/images/banner.png");
   background-size: 100% 100%;
+  cursor: pointer;
 `;
 
 const HeartIcon = styled(IoMdHeart)`
@@ -61,7 +61,7 @@ const HeartIcon = styled(IoMdHeart)`
 
 const InfoFrame = styled.div`
   width: 100%;
-  height: 155px;
+  height: 200px;
   h2 {
     padding: 8px 0 8px 0;
     font-size: 23px;

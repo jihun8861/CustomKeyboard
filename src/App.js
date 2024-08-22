@@ -42,7 +42,7 @@ function App() {
         draggable 
         pauseOnHover
         theme="colored"
-        style={{width:"550px", height:"200px", fontWeight:"bold", fontSize:"19px"}}
+        style={{width:"450px", height:"180px", fontWeight:"bold", fontSize:"19px"}}
       />
       </UserProvider>
     </BrowserRouter>
