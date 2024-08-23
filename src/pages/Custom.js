@@ -211,35 +211,57 @@ const Model = ({
   showKeyCap,
   controlsRef,
   keycapColor,
-  switchColor, // 새로운 props로 추가
+  switchColor,
   setKeycapColor,
-  setSwitchColor, // 새로운 props로 추가
+  setSwitchColor,
+  keyboardType,
 }) => {
-  const { scene: bareboneScene } = useGLTF("/models/100keyboard/barebone100.glb");
-  const { scene: switchScene } = useGLTF("/models/100keyboard/allswitch100.glb");
 
-  // Load the partial switch models
-  const { scene: switch1Scene } = useGLTF("/models/100keyboard/100switch1.glb");
-  const { scene: switch2Scene } = useGLTF("/models/100keyboard/100switch2.glb");
+  const { scene: bareboneScene } = useGLTF(`/models/${keyboardType}keyboard/barebone${keyboardType}.glb`);
 
-  const { scene: keycap1Scene } = useGLTF("/models/100keyboard/100keycaps2.glb");
-  const { scene: keycap2Scene } = useGLTF("/models/100keyboard/100keycaps1.glb");
+  const { scene: switch1Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}switch1.glb`);
+  const { scene: switch2Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}switch2.glb`);
+
+  const { scene: keycap1Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}keycaps2.glb`);
+  const { scene: keycap2Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}keycaps1.glb`);
 
   const groupRef = useRef();
 
-  // Apply the same transformations
-  [bareboneScene, switchScene, switch1Scene, switch2Scene, keycap1Scene, keycap2Scene].forEach(scene => {
-    scene.scale.set(350, 350, 350);
-    scene.position.set(-40, 0, 0);
+  const positionByKeyboardType = { // 각 키보드 배열의 중심축
+    60: [-20, 0, 0],
+    80: [-30, 0, 0],
+    100: [-40, 0, 0],
+  };
+
+  const animationOffsetByKeyboardType = { // 각 키보드 배열의 시작 위치
+    60: [-20, 50, 0],
+    80: [-30, 50, 0],
+    100: [-40, 50, 0],
+  };
+
+  const scaleByKeyboardType = { // 각 키보드 배열의 스케일
+    60: 400,
+    80: 350,
+    100: 350,
+  };
+
+  // 각 모델의 스케일과 위치를 설정
+  [bareboneScene, switch1Scene, switch2Scene, keycap1Scene, keycap2Scene].forEach((scene) => {
+    const scale = scaleByKeyboardType[keyboardType] || 350;
+    const position = positionByKeyboardType[keyboardType] || [-40, 0, 0];
+
+    scene.scale.set(scale, scale, scale);
+    scene.position.set(...position);
   });
 
+  // 스위치와 키캡의 애니메이션도 배열에 따라 조정
   const switchSpring = useSpring({
-    position: showSwitch ? [-40, 0, 0] : [-40, 50, 0],
+    position: showSwitch ? positionByKeyboardType[keyboardType] || [-40, 0, 0] : animationOffsetByKeyboardType[keyboardType] || [-40, 50, 0],
     config: { mass: 0.5, tension: 40, friction: 12 },
   });
 
   const keycapSpring = useSpring({
-    position: showKeyCap ? [-40, 0, 0] : [-40, 50, 0],
+    position: showKeyCap ? positionByKeyboardType[keyboardType] || [-40, 0, 0] : animationOffsetByKeyboardType[keyboardType] || [-40, 50, 0],
     config: { mass: 0.5, tension: 40, friction: 12 },
   });
 
@@ -252,7 +274,6 @@ const Model = ({
     });
   }, [keycapColor]);
 
-  // Apply color only to switch2Scene
   useEffect(() => {
     switch2Scene.traverse((child) => {
       if (child.isMesh) {
@@ -266,7 +287,6 @@ const Model = ({
       <primitive object={bareboneScene} />
       {showSwitch && (
         <>
-          <a.primitive object={switchScene} position={switchSpring.position} />
           <a.primitive object={switch1Scene} position={switchSpring.position} />
           <a.primitive object={switch2Scene} position={switchSpring.position} />
         </>
@@ -283,14 +303,17 @@ const Model = ({
 
 const CustomContent = () => {
   const location = useLocation();
-  const { text } = location.state || { text: "No selection" };
+  const { keyboardType, keyboardText } = location.state || { keyboardType: "100", keyboardText: "No selection" };
 
+  const [activeSelection, setActiveSelection] = useState(''); 
   const [showSwitch, setShowSwitch] = useState(false);
   const [showKeyCap, setShowKeyCap] = useState(false);
+  const [switchColorSelected, setSwitchColorSelected] = useState(false);
+  const [keycapColorSelected, setKeycapColorSelected] = useState(false);
   const controlsRef = useRef();
   const [showModal, setShowModal] = useState(true);
   const [keycapColor, setKeycapColor] = useState("white");
-  const [switchColor, setSwitchColor] = useState("white"); // 스위치 색상 상태 추가
+  const [switchColor, setSwitchColor] = useState("white");
 
   const modalSpring = useSpringCss({
     opacity: showModal ? 1 : 0,
@@ -316,15 +339,15 @@ const CustomContent = () => {
   }, []);
 
   const handleSwitchClick = () => {
-    setShowSwitch(!showSwitch);
-    if (!showSwitch) {
-      setShowKeyCap(false); // Switch가 선택되지 않으면 KeyCap을 비활성화
-    }
+    setShowSwitch(true); 
+    setShowKeyCap(false);
+    setActiveSelection('switch');
   };
 
   const handleKeyCapClick = () => {
     if (showSwitch) {
-      setShowKeyCap(!showKeyCap);
+      setShowKeyCap(true);
+      setActiveSelection('keycap');
     } else {
       alert("먼저 스위치를 선택해주세요!");
     }
@@ -332,23 +355,20 @@ const CustomContent = () => {
 
   const handleKeycapColorChange = (color) => {
     setKeycapColor(color);
+    setKeycapColorSelected(true);
   };
 
   const handleSwitchColorChange = (color) => {
     setSwitchColor(color);
+    setSwitchColorSelected(true);
   };
 
-  const colors = [
-    "red",
-    "blue",
-    "green",
-    "yellow",
-    "purple",
-    "orange",
-    "pink",
-    "brown",
-    "gray",
-    "black",
+  const switchColors = [
+    "red", "blue", "green", "yellow", "purple",
+  ];
+
+  const keycapColors = [
+    "red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "gray", "black",
   ];
 
   return (
@@ -356,7 +376,7 @@ const CustomContent = () => {
       <HeaderLine />
       <HeaderFrame>
         <Logo />
-        <BarebornText>{text}</BarebornText>
+        <BarebornText>{keyboardText}</BarebornText>
         <RightBoxContainer>
           <RightBox onClick={() => window.location.reload()}>
             <ReturnIcon />
@@ -369,22 +389,27 @@ const CustomContent = () => {
       <Frame>
         <MainFrame>
           <MainSelect>
-            <SelectText onClick={handleSwitchClick} isSelected={showSwitch}>
+            <SelectText
+              onClick={handleSwitchClick}
+              isSelected={activeSelection === 'switch'} 
+              style={{ color: activeSelection === 'switch' ? "#6d8cff" : "black" }} 
+            >
               Switch
               <IconWrapper>
-                {showSwitch ? <CheckIcon /> : <DotIcon />}
+                {switchColorSelected ? <CheckIcon /> : <DotIcon />}
               </IconWrapper>
             </SelectText>
+
             <SelectText
               onClick={handleKeyCapClick}
-              isSelected={showKeyCap && showSwitch}
+              isSelected={activeSelection === 'keycap'}
               style={{
-                color: showSwitch ? (showKeyCap ? "#6d8cff" : "#666666") : "#ccc",
-              }}
+                color: activeSelection === 'keycap' ? "#6d8cff" : (showSwitch ? "black" : "#ccc"),
+              }} 
             >
               KeyCap
               <IconWrapper>
-                {showKeyCap ? <CheckIcon /> : <DotIcon />}
+                {keycapColorSelected ? <CheckIcon /> : <DotIcon />}
               </IconWrapper>
             </SelectText>
           </MainSelect>
@@ -444,30 +469,36 @@ const CustomContent = () => {
               showKeyCap={showKeyCap}
               controlsRef={controlsRef}
               keycapColor={keycapColor}
-              switchColor={switchColor} // 새로운 props 추가
-              setKeycapColor={setKeycapColor}
-              setSwitchColor={setSwitchColor} // 새로운 props 추가
+              switchColor={switchColor}
+              keyboardType={keyboardType}
             />
           </Canvas>
         </MainFrame>
-        <ColorFrame>
-          <p>Keycap Colors:</p>
-          {colors.map((color, index) => (
-            <ColorBox
-              key={index}
-              style={{ backgroundColor: color }}
-              onClick={() => handleKeycapColorChange(color)}
-            />
-          ))}
-          <p>Switch Colors:</p>
-          {colors.map((color, index) => (
-            <ColorBox
-              key={index}
-              style={{ backgroundColor: color }}
-              onClick={() => handleSwitchColorChange(color)}
-            />
-          ))}
-        </ColorFrame>
+        
+        {/* 조건부로 ColorFrame을 렌더링 */}
+        {activeSelection === 'switch' && (
+          <ColorFrame>
+            {switchColors.map((color, index) => (
+              <ColorBox
+                key={index}
+                style={{ backgroundColor: color }}
+                onClick={() => handleSwitchColorChange(color)}
+              />
+            ))}
+          </ColorFrame>
+        )}
+
+        {activeSelection === 'keycap' && (
+          <ColorFrame>
+            {keycapColors.map((color, index) => (
+              <ColorBox
+                key={index}
+                style={{ backgroundColor: color }}
+                onClick={() => handleKeycapColorChange(color)}
+              />
+            ))}
+          </ColorFrame>
+        )}
       </Frame>
     </Container>
   );

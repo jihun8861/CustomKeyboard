@@ -81,8 +81,9 @@ const ImageText = styled.div`
 const CustomSelectContent = () => {
   const navigate = useNavigate();
 
-  const handleClick = (keyboardType) => {
-    navigate("/custom", { state: { keyboardType } });
+  // handleClick 함수에서 배열의 텍스트와 타입을 함께 전달합니다.
+  const handleClick = (keyboardType, keyboardText) => {
+    navigate("/custom", { state: { keyboardType, keyboardText } });
   };
 
   return (
@@ -91,15 +92,15 @@ const CustomSelectContent = () => {
         <TitleText>3D Custom</TitleText>
         <KeyboardFrame>
           <Keyboard>
-            <ItemFrame onClick={() => handleClick("60")}>
+            <ItemFrame onClick={() => handleClick("60", "60% Keyboard")}>
               <Image>60% 베어본 이미지</Image>
               <ImageText>60% Keyboard</ImageText>
             </ItemFrame>
-            <ItemFrame onClick={() => handleClick("80")}>
+            <ItemFrame onClick={() => handleClick("80", "80% Keyboard")}>
               <Image>80% 베어본 이미지</Image>
               <ImageText>80% Keyboard</ImageText>
             </ItemFrame>
-            <ItemFrame onClick={() => handleClick("100")}>
+            <ItemFrame onClick={() => handleClick("100", "100% Keyboard")}>
               <Image>100% 베어본 이미지</Image>
               <ImageText>100% Keyboard</ImageText>
             </ItemFrame>
