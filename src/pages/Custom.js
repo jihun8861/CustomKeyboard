@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import axios from "axios";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import styled from "styled-components";
@@ -206,14 +207,37 @@ const ColorBox = styled.div`
   cursor: pointer;
 `;
 
+const ColorModeSelect = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  position: absolute;
+  right: 20px;
+  bottom: 120px;
+`;
+
+const ModeText = styled.div`
+  margin-left: 15px;
+  cursor: pointer;
+  color: ${(props) => (props.isSelected ? "#6d8cff" : "black")};
+  font-weight: ${(props) => (props.isSelected ? "bold" : "normal")};
+  font-size: 20px;
+  font-weight: bold;
+  &: hover {
+    color: #6d8cff;
+  }
+`;
+
 const Model = ({
   showSwitch,
   showKeyCap,
   controlsRef,
   keycapColor,
   switchColor,
+  bareboneColor, // 추가
   setKeycapColor,
   setSwitchColor,
+  setBareboneColor, // 추가
   keyboardType,
 }) => {
 
@@ -253,6 +277,15 @@ const Model = ({
     scene.scale.set(scale, scale, scale);
     scene.position.set(...position);
   });
+
+  // 베어본 색상 적용
+  useEffect(() => {
+    bareboneScene.traverse((child) => {
+      if (child.isMesh) {
+        child.material.color.set(bareboneColor);
+      }
+    });
+  }, [bareboneColor]);
 
   // 스위치와 키캡의 애니메이션도 배열에 따라 조정
   const switchSpring = useSpring({
@@ -305,15 +338,45 @@ const CustomContent = () => {
   const location = useLocation();
   const { keyboardType, keyboardText } = location.state || { keyboardType: "100", keyboardText: "No selection" };
 
-  const [activeSelection, setActiveSelection] = useState(''); 
+  const [activeSelection, setActiveSelection] = useState('barebone'); // 기본 선택을 barebone으로 설정
   const [showSwitch, setShowSwitch] = useState(false);
   const [showKeyCap, setShowKeyCap] = useState(false);
   const [switchColorSelected, setSwitchColorSelected] = useState(false);
   const [keycapColorSelected, setKeycapColorSelected] = useState(false);
+  const [bareboneColorSelected, setBareboneColorSelected] = useState(false); // 베어본 색상 선택 여부 상태 추가
+  const [colorMode, setColorMode] = useState("단색"); // "단색", "무늬", "패턴" 상태 추가
   const controlsRef = useRef();
   const [showModal, setShowModal] = useState(true);
   const [keycapColor, setKeycapColor] = useState("white");
   const [switchColor, setSwitchColor] = useState("white");
+  const [bareboneColor, setBareboneColor] = useState("white"); // 베어본 색상 상태 추가
+
+
+  const [email, setEmail] = useState("gi55hun@naver.com"); // 예시 이메일, 실제로는 사용자 정보에서 가져와야 함.
+ 
+
+  const handleSave = async () => {
+    const saveTime = new Date().toISOString(); // 현재 시간을 저장 시간으로 사용
+
+    const saveData = {
+      email, // 사용자의 이메일
+      saveTime, // 저장한 시간
+      bareboneColor, // 선택한 베어본 색상
+      keyboardType, // 키보드 크기: 60%, 80%, 100%
+      keycapColor, // 선택한 키캡 색상
+      design: colorMode !== "단색" ? colorMode : null, // 80% 배열일 경우 디자인 선택 정보, 아니면 null
+      switchColor, // 선택한 스위치 색상
+    };
+
+    try {
+      const response = await axios.post("https://port-0-edcustom-lxx5p8dd0617fae9.sel5.cloudtype.app/items/save", saveData);
+      console.log("Save successful:", response.data);
+      alert("저장이 완료되었습니다!");
+    } catch (error) {
+      console.error("Error saving data:", error);
+      alert("저장에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
 
   const modalSpring = useSpringCss({
     opacity: showModal ? 1 : 0,
@@ -353,6 +416,12 @@ const CustomContent = () => {
     }
   };
 
+  const handleBareboneClick = () => {
+    setActiveSelection('barebone');
+    setShowSwitch(false);
+    setShowKeyCap(false);
+  };
+
   const handleKeycapColorChange = (color) => {
     setKeycapColor(color);
     setKeycapColorSelected(true);
@@ -363,6 +432,15 @@ const CustomContent = () => {
     setSwitchColorSelected(true);
   };
 
+  const handleBareboneColorChange = (color) => {
+    setBareboneColor(color);
+    setBareboneColorSelected(true); // 베어본 색상 선택 상태 설정
+  };
+
+  const handleColorModeChange = (mode) => {
+    setColorMode(mode); // 색상 모드 상태 변경
+  };
+
   const switchColors = [
     "red", "blue", "green", "yellow", "purple",
   ];
@@ -370,6 +448,14 @@ const CustomContent = () => {
   const keycapColors = [
     "red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "gray", "black",
   ];
+
+  const bareboneColors = [
+    "gray", "silver", "black", "white", "gold",
+  ];
+
+  // 임시 색상 배열
+  const patternColors = ["#d4a373"];
+  const designColors = ["#f4a261", "#2a9d8f", "#e76f51"];
 
   return (
     <Container>
@@ -382,13 +468,23 @@ const CustomContent = () => {
             <ReturnIcon />
             다시 시작하기
           </RightBox>
-          <PriceBtn><HeartIcon />저장하기</PriceBtn>
+          <PriceBtn onClick={handleSave}><HeartIcon />저장하기</PriceBtn>
         </RightBoxContainer>
       </HeaderFrame>
 
       <Frame>
         <MainFrame>
           <MainSelect>
+            <SelectText
+              onClick={handleBareboneClick}
+              isSelected={activeSelection === 'barebone'}
+              style={{ color: activeSelection === 'barebone' ? "#6d8cff" : "black" }} 
+            >
+              Barebone
+              <IconWrapper>
+                {bareboneColorSelected ? <CheckIcon /> : <DotIcon />} {/* 베어본 색상 선택 여부에 따라 아이콘 표시 */}
+              </IconWrapper>
+            </SelectText>
             <SelectText
               onClick={handleSwitchClick}
               isSelected={activeSelection === 'switch'} 
@@ -470,12 +566,56 @@ const CustomContent = () => {
               controlsRef={controlsRef}
               keycapColor={keycapColor}
               switchColor={switchColor}
+              bareboneColor={bareboneColor} // 추가
               keyboardType={keyboardType}
             />
           </Canvas>
         </MainFrame>
         
+        {/* 80% 배열 키보드일 때만 "단색", "무늬", "패턴" 옵션을 표시 */}
+        {keyboardType === "80" && (
+          <ColorModeSelect>
+            {["단색", "무늬", "패턴"].map((mode) => (
+              <ModeText
+                key={mode}
+                isSelected={colorMode === mode}
+                onClick={() => handleColorModeChange(mode)}
+              >
+                {mode}
+              </ModeText>
+            ))}
+          </ColorModeSelect>
+        )}
+
         {/* 조건부로 ColorFrame을 렌더링 */}
+        {activeSelection === 'barebone' && (
+          <ColorFrame>
+            {colorMode === "단색" && bareboneColors.map((color, index) => (
+              <ColorBox
+                key={index}
+                style={{ backgroundColor: color }}
+                onClick={() => handleBareboneColorChange(color)}
+              />
+            ))}
+
+            {colorMode === "무늬" && designColors.map((color, index) => (
+              <ColorBox
+                key={index}
+                style={{ backgroundColor: color }}
+                onClick={() => handleBareboneColorChange(color)}
+              />
+            ))}
+
+            {colorMode === "패턴" && patternColors.map((color, index) => (
+              <ColorBox
+                key={index}
+                style={{ backgroundColor: color }}
+                onClick={() => handleBareboneColorChange(color)}
+              />
+            ))}
+          </ColorFrame>
+        )}
+
         {activeSelection === 'switch' && (
           <ColorFrame>
             {switchColors.map((color, index) => (

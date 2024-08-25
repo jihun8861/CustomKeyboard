@@ -127,7 +127,6 @@ const ModalHeader = styled.div`
   align-items: center;
   border-bottom: 1px solid #e8e8e8;
   height: 60px;
-  border: solid 1px;
 `;
 
 const CloseIcon = styled(IoCloseOutline)`
@@ -139,7 +138,6 @@ const ModalMain = styled.div`
   display: flex;
   flex-direction: column;
   height: 400px;
-  border: solid 1px;
   position: relative;
 `;
 
@@ -151,19 +149,19 @@ const ModalLogo = styled.div`
     height: 30%;
   }
   position: absolute;
-  top: 200px;
+  top: 100px;
 `;
 
 const MainText = styled.div`
   position: absolute;
-  top: 240px;
+  top: 160px;
   font-size: 27px;
   font-weight: bold;
 `;
 
 const MainText2 = styled.div`
   position: absolute;
-  top: 280px;
+  top: 200px;
   font-size: 27px;
   font-weight: bold;
 `;
@@ -171,7 +169,6 @@ const MainText2 = styled.div`
 const ModalFooter = styled.div`
   height: 100px;
   padding-right: 180px;
-  border: solid 1px;
   display: flex;
   align-items: center;
 `;
