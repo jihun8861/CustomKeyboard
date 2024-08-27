@@ -10,6 +10,7 @@ import { GoDotFill } from "react-icons/go";
 import { FaRegHeart,FaCheck} from "react-icons/fa";
 import { useSpring, animated as a } from "@react-spring/three";
 import { useSpring as useSpringCss, animated } from "@react-spring/web";
+import { useUser } from '../context/UserContext';
 
 const Container = styled.div`
   width: 100%;
@@ -335,39 +336,69 @@ const Model = ({
 };
 
 const CustomContent = () => {
+  const { userInfo } = useUser();
   const location = useLocation();
   const { keyboardType, keyboardText } = location.state || { keyboardType: "100", keyboardText: "No selection" };
 
-  const [activeSelection, setActiveSelection] = useState('barebone'); // 기본 선택을 barebone으로 설정
+  const [activeSelection, setActiveSelection] = useState('barebone');
   const [showSwitch, setShowSwitch] = useState(false);
   const [showKeyCap, setShowKeyCap] = useState(false);
   const [switchColorSelected, setSwitchColorSelected] = useState(false);
   const [keycapColorSelected, setKeycapColorSelected] = useState(false);
-  const [bareboneColorSelected, setBareboneColorSelected] = useState(false); // 베어본 색상 선택 여부 상태 추가
-  const [colorMode, setColorMode] = useState("단색"); // "단색", "무늬", "패턴" 상태 추가
+  const [bareboneColorSelected, setBareboneColorSelected] = useState(false);
+  const [colorMode, setColorMode] = useState("단색");
   const controlsRef = useRef();
   const [showModal, setShowModal] = useState(true);
   const [keycapColor, setKeycapColor] = useState("white");
   const [switchColor, setSwitchColor] = useState("white");
-  const [bareboneColor, setBareboneColor] = useState("white"); // 베어본 색상 상태 추가
+  const [bareboneColor, setBareboneColor] = useState("white");
 
+  const email = userInfo?.email || ""; 
 
-  const [email, setEmail] = useState("gi55hun@naver.com"); // 예시 이메일, 실제로는 사용자 정보에서 가져와야 함.
- 
+  // Wishlist에서 저장된 데이터를 불러와 상태 설정
+  useEffect(() => {
+    const loadWishlist = async () => {
+      try {
+        const response = await axios.post(`https://port-0-edcustom-lxx5p8dd0617fae9.sel5.cloudtype.app/items/get?email=${email}`);
+        const data = response.data;
 
-  const handleSave = async () => {
-    const saveTime = new Date().toISOString(); // 현재 시간을 저장 시간으로 사용
+        if (data) {
+          setKeycapColor(data.keycapColor || "white");
+          setSwitchColor(data.switchColor || "white");
+          setBareboneColor(data.bareboneColor || "white");
 
-    const saveData = {
-      email, // 사용자의 이메일
-      saveTime, // 저장한 시간
-      bareboneColor, // 선택한 베어본 색상
-      keyboardType, // 키보드 크기: 60%, 80%, 100%
-      keycapColor, // 선택한 키캡 색상
-      design: colorMode !== "단색" ? colorMode : null, // 80% 배열일 경우 디자인 선택 정보, 아니면 null
-      switchColor, // 선택한 스위치 색상
+          setKeycapColorSelected(!!data.keycapColor);
+          setSwitchColorSelected(!!data.switchColor);
+          setBareboneColorSelected(!!data.bareboneColor);
+
+          setShowSwitch(!!data.switchColor);
+          setShowKeyCap(!!data.keycapColor);
+        }
+      } catch (error) {
+        console.error("Error loading wishlist data:", error);
+      }
     };
 
+    loadWishlist();
+  }, [email]);
+
+  const handleSave = async () => {
+    const currentTime = new Date();
+    const kstOffset = 9 * 60 * 60 * 1000;
+    const kstTime = new Date(currentTime.getTime() + kstOffset);
+  
+    const saveTime = kstTime.toISOString().replace('T', ' ').split('.')[0];
+  
+    const saveData = {
+      email, 
+      saveTime, 
+      bareboneColor, 
+      keyboardType, 
+      keycapColor, 
+      design: colorMode !== "단색" ? colorMode : null,
+      switchColor, 
+    };
+  
     try {
       const response = await axios.post("https://port-0-edcustom-lxx5p8dd0617fae9.sel5.cloudtype.app/items/save", saveData);
       console.log("Save successful:", response.data);
@@ -377,7 +408,7 @@ const CustomContent = () => {
       alert("저장에 실패했습니다. 다시 시도해주세요.");
     }
   };
-
+  
   const modalSpring = useSpringCss({
     opacity: showModal ? 1 : 0,
     config: { duration: 1000 },
@@ -455,7 +486,6 @@ const CustomContent = () => {
 
   // 임시 색상 배열
   const patternColors = ["#d4a373"];
-  const designColors = ["#f4a261", "#2a9d8f", "#e76f51"];
 
   return (
     <Container>
@@ -519,63 +549,63 @@ const CustomContent = () => {
             </ModalOverlay>
           )}
 
-          <Canvas
-            camera={{ position: [10, 100, 100], fov: 60 }}
-            style={{ width: "100%", height: "100%" }}
-            shadows
-          >
-            <OrbitControls
-              ref={controlsRef}
-              target={[10, 0, 0]}
-              enablePan={false}
-              enableZoom={true}
-              zoomSpeed={0.15}
-              minDistance={110}
-              maxDistance={130}
-              enableRotate={true}
-              rotateSpeed={0.3}
-              minPolarAngle={0}
-              maxPolarAngle={Math.PI / 2}
-            />
+<Canvas
+        camera={{ position: [10, 100, 100], fov: 60 }}
+        style={{ width: "100%", height: "100%" }}
+        shadows
+      >
+        <OrbitControls
+          ref={controlsRef}
+          target={[10, 0, 0]}
+          enablePan={false}
+          enableZoom={true}
+          zoomSpeed={0.15}
+          minDistance={110}
+          maxDistance={130}
+          enableRotate={true}
+          rotateSpeed={0.3}
+          minPolarAngle={0}
+          maxPolarAngle={Math.PI / 2}
+        />
 
-            <ambientLight intensity={2.0} />
+        <ambientLight intensity={2.0} />
 
-            <directionalLight
-              position={[30, 50, 30]}
-              intensity={2.5}
-              castShadow
-              shadow-mapSize-width={2048}
-              shadow-mapSize-height={2048}
-              shadow-camera-far={50}
-              shadow-camera-left={-20}
-              shadow-camera-right={20}
-              shadow-camera-top={20}
-              shadow-camera-bottom={-20}
-            />
+        <directionalLight
+          position={[30, 50, 30]}
+          intensity={2.5}
+          castShadow
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          shadow-camera-far={50}
+          shadow-camera-left={-20}
+          shadow-camera-right={20}
+          shadow-camera-top={20}
+          shadow-camera-bottom={-20}
+        />
 
-            <directionalLight position={[-30, 50, -30]} intensity={2.0} />
-            <directionalLight position={[0, 30, -50]} intensity={1.8} />
+        <directionalLight position={[-30, 50, -30]} intensity={2.0} />
+        <directionalLight position={[0, 30, -50]} intensity={1.8} />
 
-            <pointLight position={[0, 50, 0]} intensity={1.5} />
-            <pointLight position={[-50, 50, 50]} intensity={1.5} />
-            <pointLight position={[50, 50, -50]} intensity={1.5} />
+        <pointLight position={[0, 50, 0]} intensity={1.5} />
+        <pointLight position={[-50, 50, 50]} intensity={1.5} />
+        <pointLight position={[50, 50, -50]} intensity={1.5} />
 
-            <Model
-              showSwitch={showSwitch}
-              showKeyCap={showKeyCap}
-              controlsRef={controlsRef}
-              keycapColor={keycapColor}
-              switchColor={switchColor}
-              bareboneColor={bareboneColor} // 추가
-              keyboardType={keyboardType}
-            />
-          </Canvas>
+        <Model
+          showSwitch={showSwitch}
+          showKeyCap={showKeyCap}
+          controlsRef={controlsRef}
+          keycapColor={keycapColor}
+          switchColor={switchColor}
+          bareboneColor={bareboneColor}
+          keyboardType={keyboardType}
+        />
+      </Canvas>
         </MainFrame>
         
-        {/* 80% 배열 키보드일 때만 "단색", "무늬", "패턴" 옵션을 표시 */}
+        {/* 80% 배열 키보드일 때만 "단색", "패턴" 옵션을 표시 */}
         {keyboardType === "80" && (
           <ColorModeSelect>
-            {["단색", "무늬", "패턴"].map((mode) => (
+            {["단색", "패턴"].map((mode) => (
               <ModeText
                 key={mode}
                 isSelected={colorMode === mode}
@@ -591,14 +621,6 @@ const CustomContent = () => {
         {activeSelection === 'barebone' && (
           <ColorFrame>
             {colorMode === "단색" && bareboneColors.map((color, index) => (
-              <ColorBox
-                key={index}
-                style={{ backgroundColor: color }}
-                onClick={() => handleBareboneColorChange(color)}
-              />
-            ))}
-
-            {colorMode === "무늬" && designColors.map((color, index) => (
               <ColorBox
                 key={index}
                 style={{ backgroundColor: color }}
