@@ -290,7 +290,7 @@ const Header = ({ isHome }) => {
     if (isLoggedIn) {
       navigate("/customselect");
     } else {
-      navigate("/signup");
+      navigate("/signin");
     }
   };
 

@@ -232,39 +232,46 @@ const ModeText = styled.div`
 const Model = ({
   showSwitch,
   showKeyCap,
-  controlsRef,
   keycapColor,
   switchColor,
-  bareboneColor, // 추가
-  setKeycapColor,
-  setSwitchColor,
-  setBareboneColor, // 추가
+  bareboneColor, 
   keyboardType,
+  selectedPattern, 
 }) => {
-
   const { scene: bareboneScene } = useGLTF(`/models/${keyboardType}keyboard/barebone${keyboardType}.glb`);
 
   const { scene: switch1Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}switch1.glb`);
   const { scene: switch2Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}switch2.glb`);
 
-  const { scene: keycap1Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}keycaps2.glb`);
-  const { scene: keycap2Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}keycaps1.glb`);
+  // keycap1Path는 기존 로직 그대로 유지
+  const keycap1Path = selectedPattern
+    ? `/models/${keyboardType}keyboard/${selectedPattern}.glb`
+    : `/models/${keyboardType}keyboard/${keyboardType}keycaps2.glb`;
+
+  const { scene: keycap1Scene } = useGLTF(keycap1Path);
+
+  // selectedPattern이 '80moonrabbit'이면 '80moonrabbit1.glb'를 로드하도록 수정
+  const keycap2Path = selectedPattern === "80moonrabbit"
+    ? `/models/${keyboardType}keyboard/80moonrabbit1.glb`
+    : `/models/${keyboardType}keyboard/${keyboardType}keycaps1.glb`;
+
+  const { scene: keycap2Scene } = useGLTF(keycap2Path);
 
   const groupRef = useRef();
 
-  const positionByKeyboardType = { // 각 키보드 배열의 중심축
+  const positionByKeyboardType = { 
     60: [-20, 0, 0],
     80: [-30, 0, 0],
     100: [-40, 0, 0],
   };
 
-  const animationOffsetByKeyboardType = { // 각 키보드 배열의 시작 위치
+  const animationOffsetByKeyboardType = { 
     60: [-20, 50, 0],
     80: [-30, 50, 0],
     100: [-40, 50, 0],
   };
 
-  const scaleByKeyboardType = { // 각 키보드 배열의 스케일
+  const scaleByKeyboardType = { 
     60: 400,
     80: 350,
     100: 350,
@@ -306,7 +313,7 @@ const Model = ({
         child.material.color.set(keycapColor);
       }
     });
-  }, [keycapColor]);
+  }, [keycapColor, selectedPattern]);
 
   useEffect(() => {
     switch2Scene.traverse((child) => {
@@ -353,6 +360,19 @@ const CustomContent = () => {
   const [switchColor, setSwitchColor] = useState("white");
   const [bareboneColor, setBareboneColor] = useState("white");
 
+  const [selectedPattern, setSelectedPattern] = useState(null);
+
+  const handlePatternClick = (pattern) => {
+    setSelectedPattern(pattern);
+  };
+  
+
+  const patternImages = [
+    { name: "80moonrabbit", image: "test1" },
+    { name: "80dosirac", image: "test2" },
+    { name: "80leaf", image: "test3" },
+  ];
+
   const email = userInfo?.email || ""; 
 
   // Wishlist에서 저장된 데이터를 불러와 상태 설정
@@ -395,7 +415,7 @@ const CustomContent = () => {
       bareboneColor, 
       keyboardType, 
       keycapColor, 
-      design: colorMode !== "단색" ? colorMode : null,
+      design: selectedPattern || (colorMode !== "단색" ? colorMode : null),
       switchColor, 
     };
   
@@ -407,7 +427,7 @@ const CustomContent = () => {
       console.error("Error saving data:", error);
       alert("저장에 실패했습니다. 다시 시도해주세요.");
     }
-  };
+  };  
   
   const modalSpring = useSpringCss({
     opacity: showModal ? 1 : 0,
@@ -484,9 +504,6 @@ const CustomContent = () => {
     "gray", "silver", "black", "white", "gold",
   ];
 
-  // 임시 색상 배열
-  const patternColors = ["#d4a373"];
-
   return (
     <Container>
       <HeaderLine />
@@ -501,7 +518,7 @@ const CustomContent = () => {
           <PriceBtn onClick={handleSave}><HeartIcon />저장하기</PriceBtn>
         </RightBoxContainer>
       </HeaderFrame>
-
+  
       <Frame>
         <MainFrame>
           <MainSelect>
@@ -512,7 +529,7 @@ const CustomContent = () => {
             >
               Barebone
               <IconWrapper>
-                {bareboneColorSelected ? <CheckIcon /> : <DotIcon />} {/* 베어본 색상 선택 여부에 따라 아이콘 표시 */}
+                {bareboneColorSelected ? <CheckIcon /> : <DotIcon />}
               </IconWrapper>
             </SelectText>
             <SelectText
@@ -525,7 +542,7 @@ const CustomContent = () => {
                 {switchColorSelected ? <CheckIcon /> : <DotIcon />}
               </IconWrapper>
             </SelectText>
-
+  
             <SelectText
               onClick={handleKeyCapClick}
               isSelected={activeSelection === 'keycap'}
@@ -539,7 +556,7 @@ const CustomContent = () => {
               </IconWrapper>
             </SelectText>
           </MainSelect>
-
+  
           {showModal && (
             <ModalOverlay style={modalSpring}>
               <Modal>
@@ -548,62 +565,67 @@ const CustomContent = () => {
               </Modal>
             </ModalOverlay>
           )}
+  
+  <Canvas
+  camera={{ position: [10, 100, 100], fov: 60 }}
+  style={{ width: "100%", height: "100%" }}
+  shadows
+>
+  <OrbitControls
+    ref={controlsRef}
+    target={[10, 0, 0]}
+    enablePan={false}
+    enableZoom={true}
+    zoomSpeed={0.15}
+    minDistance={110}
+    maxDistance={130}
+    enableRotate={true}
+    rotateSpeed={0.3}
+    minPolarAngle={0}
+    maxPolarAngle={Math.PI / 2}
+  />
 
-<Canvas
-        camera={{ position: [10, 100, 100], fov: 60 }}
-        style={{ width: "100%", height: "100%" }}
-        shadows
-      >
-        <OrbitControls
-          ref={controlsRef}
-          target={[10, 0, 0]}
-          enablePan={false}
-          enableZoom={true}
-          zoomSpeed={0.15}
-          minDistance={110}
-          maxDistance={130}
-          enableRotate={true}
-          rotateSpeed={0.3}
-          minPolarAngle={0}
-          maxPolarAngle={Math.PI / 2}
-        />
+  {/* Adjusted ambient light */}
+  <ambientLight intensity={1.0} />
 
-        <ambientLight intensity={2.0} />
+  {/* Adjusted directional lights */}
+  <directionalLight
+    position={[30, 50, 30]}
+    intensity={1.5}
+    castShadow
+    shadow-mapSize-width={2048}
+    shadow-mapSize-height={2048}
+    shadow-camera-far={50}
+    shadow-camera-left={-20}
+    shadow-camera-right={20}
+    shadow-camera-top={20}
+    shadow-camera-bottom={-20}
+  />
 
-        <directionalLight
-          position={[30, 50, 30]}
-          intensity={2.5}
-          castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-          shadow-camera-far={50}
-          shadow-camera-left={-20}
-          shadow-camera-right={20}
-          shadow-camera-top={20}
-          shadow-camera-bottom={-20}
-        />
+  <directionalLight position={[-30, 50, -30]} intensity={1.2} />
+  <directionalLight position={[0, 30, -50]} intensity={1.0} />
 
-        <directionalLight position={[-30, 50, -30]} intensity={2.0} />
-        <directionalLight position={[0, 30, -50]} intensity={1.8} />
+  {/* Reduced intensity of point lights */}
+  <pointLight position={[0, 50, 0]} intensity={1.0} />
+  <pointLight position={[-50, 50, 50]} intensity={1.0} />
+  <pointLight position={[50, 50, -50]} intensity={1.0} />
 
-        <pointLight position={[0, 50, 0]} intensity={1.5} />
-        <pointLight position={[-50, 50, 50]} intensity={1.5} />
-        <pointLight position={[50, 50, -50]} intensity={1.5} />
+  <Model
+    showSwitch={showSwitch}
+    showKeyCap={showKeyCap}
+    controlsRef={controlsRef}
+    keycapColor={keycapColor}
+    switchColor={switchColor}
+    bareboneColor={bareboneColor}
+    keyboardType={keyboardType}
+    selectedPattern={selectedPattern} // Pass selectedPattern
+  />
+</Canvas>
 
-        <Model
-          showSwitch={showSwitch}
-          showKeyCap={showKeyCap}
-          controlsRef={controlsRef}
-          keycapColor={keycapColor}
-          switchColor={switchColor}
-          bareboneColor={bareboneColor}
-          keyboardType={keyboardType}
-        />
-      </Canvas>
         </MainFrame>
-        
+  
         {/* 80% 배열 키보드일 때만 "단색", "패턴" 옵션을 표시 */}
-        {keyboardType === "80" && (
+        {keyboardType === "80" && activeSelection === 'keycap' && (
           <ColorModeSelect>
             {["단색", "패턴"].map((mode) => (
               <ModeText
@@ -616,19 +638,11 @@ const CustomContent = () => {
             ))}
           </ColorModeSelect>
         )}
-
+  
         {/* 조건부로 ColorFrame을 렌더링 */}
         {activeSelection === 'barebone' && (
           <ColorFrame>
-            {colorMode === "단색" && bareboneColors.map((color, index) => (
-              <ColorBox
-                key={index}
-                style={{ backgroundColor: color }}
-                onClick={() => handleBareboneColorChange(color)}
-              />
-            ))}
-
-            {colorMode === "패턴" && patternColors.map((color, index) => (
+            {bareboneColors.map((color, index) => (
               <ColorBox
                 key={index}
                 style={{ backgroundColor: color }}
@@ -637,7 +651,7 @@ const CustomContent = () => {
             ))}
           </ColorFrame>
         )}
-
+  
         {activeSelection === 'switch' && (
           <ColorFrame>
             {switchColors.map((color, index) => (
@@ -649,22 +663,35 @@ const CustomContent = () => {
             ))}
           </ColorFrame>
         )}
-
-        {activeSelection === 'keycap' && (
-          <ColorFrame>
-            {keycapColors.map((color, index) => (
-              <ColorBox
-                key={index}
-                style={{ backgroundColor: color }}
-                onClick={() => handleKeycapColorChange(color)}
-              />
-            ))}
-          </ColorFrame>
-        )}
+  
+  {activeSelection === 'keycap' && (
+      <ColorFrame>
+        {colorMode === "단색" &&
+          keycapColors.map((color, index) => (
+            <ColorBox
+              key={index}
+              style={{ backgroundColor: color }}
+              onClick={() => handleKeycapColorChange(color)}
+            />
+          ))}
+        
+        {colorMode === "패턴" &&
+          patternImages.map((pattern, index) => (
+            <ColorBox
+              key={index}
+              style={{
+                backgroundImage: `url(/images/${pattern.image}.png)`,
+                backgroundSize: "cover",
+              }}
+              onClick={() => handlePatternClick(pattern.name)}
+            />
+          ))}
+      </ColorFrame>
+    )}
       </Frame>
     </Container>
   );
-};
+};  
 
 const Custom = () => {
   return (

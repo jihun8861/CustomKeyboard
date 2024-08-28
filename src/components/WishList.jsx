@@ -136,6 +136,7 @@ const WishList = () => {
               <p>베어본 색상: {keyboard.barebonecolor}</p>
               <p>키캡 색상: {keyboard.keycapcolor}</p>
               <p>스위치 색상: {keyboard.switchcolor}</p>
+              <p>패턴: {keyboard.design}</p>
               <DesignCheckBtn onClick={() => handleDesignCheck(keyboard)}>디자인 확인하기</DesignCheckBtn>
             </InfoFrame>
           </FrameBox>
