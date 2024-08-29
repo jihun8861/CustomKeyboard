@@ -18,6 +18,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   z-index: 100;
+  background-color: #f1f2ed;
 `;
 
 const Frame = styled.div`
@@ -39,6 +40,7 @@ const HeaderFrame = styled.div`
   height: 80px;
   display: flex;
   align-items: center;
+  background-color: white;  
 `;
 
 const Logo = styled.div`
@@ -107,7 +109,6 @@ const PriceBtn = styled.button`
 `;
 
 const MainFrame = styled.div`
-  background-color: #f1f2ed;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -197,13 +198,15 @@ const ColorFrame = styled.div`
   width: 100%;
   height: 100px;
   display: flex;
+  justify-content: center;
   position: fixed;
   bottom: 0;
-  left: 0;
 `;
 
 const ColorBox = styled.div`
-  flex: 1;
+display: flex;
+justify-content: center;
+  width: 100%;
   height: 100%;
   cursor: pointer;
 `;
@@ -345,32 +348,38 @@ const Model = ({
 const CustomContent = () => {
   const { userInfo } = useUser();
   const location = useLocation();
+
+  // 전달된 키보드 데이터를 가져옵니다.
+  const keyboardData = location.state || {};
+
   const { keyboardType, keyboardText } = location.state || { keyboardType: "100", keyboardText: "No selection" };
 
+
+  // 전달된 데이터를 사용하여 초기 상태를 설정합니다.
   const [activeSelection, setActiveSelection] = useState('barebone');
-  const [showSwitch, setShowSwitch] = useState(false);
-  const [showKeyCap, setShowKeyCap] = useState(false);
-  const [switchColorSelected, setSwitchColorSelected] = useState(false);
-  const [keycapColorSelected, setKeycapColorSelected] = useState(false);
-  const [bareboneColorSelected, setBareboneColorSelected] = useState(false);
-  const [colorMode, setColorMode] = useState("단색");
+  const [showSwitch, setShowSwitch] = useState(!!keyboardData.switchColor);
+  const [showKeyCap, setShowKeyCap] = useState(!!keyboardData.keycapColor);
+  const [switchColorSelected, setSwitchColorSelected] = useState(!!keyboardData.switchColor);
+  const [keycapColorSelected, setKeycapColorSelected] = useState(!!keyboardData.keycapColor);
+  const [bareboneColorSelected, setBareboneColorSelected] = useState(!!keyboardData.bareboneColor);
+  const [colorMode, setColorMode] = useState(keyboardData.design ? "패턴" : "단색");
   const controlsRef = useRef();
   const [showModal, setShowModal] = useState(true);
-  const [keycapColor, setKeycapColor] = useState("white");
-  const [switchColor, setSwitchColor] = useState("white");
-  const [bareboneColor, setBareboneColor] = useState("white");
 
-  const [selectedPattern, setSelectedPattern] = useState(null);
+  // 전달된 키보드 데이터를 사용하여 초기 색상과 패턴을 설정합니다.
+  const [keycapColor, setKeycapColor] = useState(keyboardData.keycapColor || "white");
+  const [switchColor, setSwitchColor] = useState(keyboardData.switchColor || "white");
+  const [bareboneColor, setBareboneColor] = useState(keyboardData.bareboneColor || "white");
+  const [selectedPattern, setSelectedPattern] = useState(keyboardData.design || null);
 
   const handlePatternClick = (pattern) => {
     setSelectedPattern(pattern);
   };
   
-
   const patternImages = [
-    { name: "80moonrabbit", image: "test1" },
-    { name: "80dosirac", image: "test2" },
-    { name: "80leaf", image: "test3" },
+    { name: "80moonrabbit", image: "1" },
+    { name: "80dosirac", image: "2" },
+    { name: "80leaf", image: "3" },
   ];
 
   const email = userInfo?.email || ""; 
@@ -410,13 +419,13 @@ const CustomContent = () => {
     const saveTime = kstTime.toISOString().replace('T', ' ').split('.')[0];
   
     const saveData = {
-      email, 
-      saveTime, 
-      bareboneColor, 
-      keyboardType, 
-      keycapColor, 
+      email,
+      saveTime,
+      bareboneColor,
+      keyboardType,
+      keycapColor,
       design: selectedPattern || (colorMode !== "단색" ? colorMode : null),
-      switchColor, 
+      switchColor,
     };
   
     try {
@@ -427,7 +436,7 @@ const CustomContent = () => {
       console.error("Error saving data:", error);
       alert("저장에 실패했습니다. 다시 시도해주세요.");
     }
-  };  
+  };
   
   const modalSpring = useSpringCss({
     opacity: showModal ? 1 : 0,
@@ -678,13 +687,16 @@ const CustomContent = () => {
         {colorMode === "패턴" &&
           patternImages.map((pattern, index) => (
             <ColorBox
-              key={index}
-              style={{
-                backgroundImage: `url(/images/${pattern.image}.png)`,
-                backgroundSize: "cover",
-              }}
-              onClick={() => handlePatternClick(pattern.name)}
-            />
+            key={index}
+            style={{
+              backgroundImage: `url(/images/${pattern.image}.png)`,
+              backgroundSize: "100% 100%",
+              width: "120px",
+              margin: "0 20px"
+            }}
+            onClick={() => handlePatternClick(pattern.name)}
+          />
+          
           ))}
       </ColorFrame>
     )}

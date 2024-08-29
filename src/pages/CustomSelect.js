@@ -9,14 +9,12 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: solid 1px;
   margin: 50px 0 50px 0;
 `;
 
 const Frame = styled.div`
-  width: 80%;
-  height: 100%;
-  border: solid 1px;
+  width: 100%;
+  height: 95%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,7 +24,6 @@ const Frame = styled.div`
 const TitleText = styled.h1`
   width: 100%;
   height: auto;
-  border: solid 1px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -35,7 +32,6 @@ const TitleText = styled.h1`
 const KeyboardFrame = styled.div`
   width: 100%;
   height: 400px;
-  border: solid 1px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,9 +46,8 @@ const Keyboard = styled.div`
 `;
 
 const ItemFrame = styled.a`
-  width: 28%;
+  width: 30%;
   height: 100%;
-  border: solid 1px;
   display: flex;
   flex-direction: column;
   text-decoration: none;
@@ -63,19 +58,21 @@ const ItemFrame = styled.a`
 const Image = styled.div`
   width: 100%;
   height: 80%;
-  border: solid 1px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-size: 100% 100%;
+  background-position: center;
 `;
 
 const ImageText = styled.div`
   width: 100%;
   height: 20%;
-  border: solid 1px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 19px;
+  font-weight: bold;
 `;
 
 const CustomSelectContent = () => {
@@ -93,16 +90,16 @@ const CustomSelectContent = () => {
         <KeyboardFrame>
           <Keyboard>
             <ItemFrame onClick={() => handleClick("60", "60% Keyboard")}>
-              <Image>60% 베어본 이미지</Image>
-              <ImageText>60% Keyboard</ImageText>
+              <Image style={{ backgroundImage: `url(/images/60keyboard.png)` }} />
+              <ImageText>60키 Keyboard</ImageText>
             </ItemFrame>
             <ItemFrame onClick={() => handleClick("80", "80% Keyboard")}>
-              <Image>80% 베어본 이미지</Image>
-              <ImageText>80% Keyboard</ImageText>
+              <Image style={{ backgroundImage: `url(/images/80keyboard.png)` }} />
+              <ImageText>87키 Keyboard</ImageText>
             </ItemFrame>
             <ItemFrame onClick={() => handleClick("100", "100% Keyboard")}>
-              <Image>100% 베어본 이미지</Image>
-              <ImageText>100% Keyboard</ImageText>
+              <Image style={{ backgroundImage: `url(/images/100keyboard.png)` }} />
+              <ImageText>104키 Keyboard</ImageText>
             </ItemFrame>
           </Keyboard>
         </KeyboardFrame>

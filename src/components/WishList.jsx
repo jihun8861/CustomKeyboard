@@ -69,6 +69,10 @@ const InfoFrame = styled.div`
     padding: 8px 0 8px 0;
     font-size: 23px;
   }
+  p {
+    color: #222222;
+    padding: 1px 0 1px 0;
+  }
 `;
 
 const DesignCheckBtn = styled.button`
@@ -115,8 +119,10 @@ const WishList = () => {
   }, [userInfo]);
 
   const handleDesignCheck = (keyboard) => {
-    navigate("/custom", { state: keyboard }); // 키보드 데이터를 그대로 전달
-  };  
+    console.log("Navigating to Custom with keyboard data:", keyboard); // 데이터 로그 확인
+    navigate("/custom", { state: keyboard }); 
+  };
+  
 
   return (
     <Container>
@@ -132,7 +138,7 @@ const WishList = () => {
             </ImageFrame>
             <InfoFrame>
               <h2>{keyboard.keyboardtype}% 배열 키보드</h2> {/* 서버에서 받아온 필드 이름 사용 */}
-              <span>{new Date(keyboard.savetime).toLocaleString()}</span> {/* 날짜를 읽기 쉽게 변환 */}
+              <p>저장된 시각: {new Date(keyboard.savetime).toLocaleString()}</p> {/* 날짜를 읽기 쉽게 변환 */}
               <p>베어본 색상: {keyboard.barebonecolor}</p>
               <p>키캡 색상: {keyboard.keycapcolor}</p>
               <p>스위치 색상: {keyboard.switchcolor}</p>
