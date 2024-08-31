@@ -7,10 +7,10 @@ import { useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import { GoDotFill } from "react-icons/go";
-import { FaRegHeart,FaCheck} from "react-icons/fa";
+import { FaRegHeart, FaCheck } from "react-icons/fa";
 import { useSpring, animated as a } from "@react-spring/three";
 import { useSpring as useSpringCss, animated } from "@react-spring/web";
-import { useUser } from '../context/UserContext';
+import { useUser } from "../context/UserContext";
 
 const Container = styled.div`
   width: 100%;
@@ -40,7 +40,7 @@ const HeaderFrame = styled.div`
   height: 80px;
   display: flex;
   align-items: center;
-  background-color: white;  
+  background-color: white;
 `;
 
 const Logo = styled.div`
@@ -139,12 +139,12 @@ const IconWrapper = styled.div`
 
 const CheckIcon = styled(FaCheck)`
   font-size: 20px;
-`
+`;
 
 const DotIcon = styled(GoDotFill)`
-font-size: 14px;
-color: black;
-`
+  font-size: 14px;
+  color: black;
+`;
 
 const SelectText = styled.div`
   width: 100%;
@@ -156,7 +156,8 @@ const SelectText = styled.div`
   font-weight: bold;
   cursor: pointer;
   z-index: 20;
-  color: ${({ isSelected }) => (isSelected ? "#6d8cff" : "#666666")}; // 선택된 상태일 때 색상 변경
+  color: ${({ isSelected }) =>
+    isSelected ? "#6d8cff" : "#666666"}; // 선택된 상태일 때 색상 변경
   position: relative;
 `;
 
@@ -204,8 +205,8 @@ const ColorFrame = styled.div`
 `;
 
 const ColorBox = styled.div`
-display: flex;
-justify-content: center;
+  display: flex;
+  justify-content: center;
   width: 100%;
   height: 100%;
   cursor: pointer;
@@ -237,14 +238,20 @@ const Model = ({
   showKeyCap,
   keycapColor,
   switchColor,
-  bareboneColor, 
+  bareboneColor,
   keyboardType,
-  selectedPattern, 
+  selectedPattern,
 }) => {
-  const { scene: bareboneScene } = useGLTF(`/models/${keyboardType}keyboard/barebone${keyboardType}.glb`);
+  const { scene: bareboneScene } = useGLTF(
+    `/models/${keyboardType}keyboard/barebone${keyboardType}.glb`
+  );
 
-  const { scene: switch1Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}switch1.glb`);
-  const { scene: switch2Scene } = useGLTF(`/models/${keyboardType}keyboard/${keyboardType}switch2.glb`);
+  const { scene: switch1Scene } = useGLTF(
+    `/models/${keyboardType}keyboard/${keyboardType}switch1.glb`
+  );
+  const { scene: switch2Scene } = useGLTF(
+    `/models/${keyboardType}keyboard/${keyboardType}switch2.glb`
+  );
 
   // keycap1Path는 기존 로직 그대로 유지
   const keycap1Path = selectedPattern
@@ -254,34 +261,41 @@ const Model = ({
   const { scene: keycap1Scene } = useGLTF(keycap1Path);
 
   // selectedPattern이 '80moonrabbit'이면 '80moonrabbit1.glb'를 로드하도록 수정
-  const keycap2Path = selectedPattern === "80moonrabbit"
-    ? `/models/${keyboardType}keyboard/80moonrabbit1.glb`
-    : `/models/${keyboardType}keyboard/${keyboardType}keycaps1.glb`;
+  const keycap2Path =
+    selectedPattern === "80moonrabbit"
+      ? `/models/${keyboardType}keyboard/80moonrabbit1.glb`
+      : `/models/${keyboardType}keyboard/${keyboardType}keycaps1.glb`;
 
   const { scene: keycap2Scene } = useGLTF(keycap2Path);
 
   const groupRef = useRef();
 
-  const positionByKeyboardType = { 
+  const positionByKeyboardType = {
     60: [-20, 0, 0],
     80: [-30, 0, 0],
     100: [-40, 0, 0],
   };
 
-  const animationOffsetByKeyboardType = { 
+  const animationOffsetByKeyboardType = {
     60: [-20, 50, 0],
     80: [-30, 50, 0],
     100: [-40, 50, 0],
   };
 
-  const scaleByKeyboardType = { 
+  const scaleByKeyboardType = {
     60: 400,
     80: 350,
     100: 350,
   };
 
   // 각 모델의 스케일과 위치를 설정
-  [bareboneScene, switch1Scene, switch2Scene, keycap1Scene, keycap2Scene].forEach((scene) => {
+  [
+    bareboneScene,
+    switch1Scene,
+    switch2Scene,
+    keycap1Scene,
+    keycap2Scene,
+  ].forEach((scene) => {
     const scale = scaleByKeyboardType[keyboardType] || 350;
     const position = positionByKeyboardType[keyboardType] || [-40, 0, 0];
 
@@ -300,12 +314,16 @@ const Model = ({
 
   // 스위치와 키캡의 애니메이션도 배열에 따라 조정
   const switchSpring = useSpring({
-    position: showSwitch ? positionByKeyboardType[keyboardType] || [-40, 0, 0] : animationOffsetByKeyboardType[keyboardType] || [-40, 50, 0],
+    position: showSwitch
+      ? positionByKeyboardType[keyboardType] || [-40, 0, 0]
+      : animationOffsetByKeyboardType[keyboardType] || [-40, 50, 0],
     config: { mass: 0.5, tension: 40, friction: 12 },
   });
 
   const keycapSpring = useSpring({
-    position: showKeyCap ? positionByKeyboardType[keyboardType] || [-40, 0, 0] : animationOffsetByKeyboardType[keyboardType] || [-40, 50, 0],
+    position: showKeyCap
+      ? positionByKeyboardType[keyboardType] || [-40, 0, 0]
+      : animationOffsetByKeyboardType[keyboardType] || [-40, 50, 0],
     config: { mass: 0.5, tension: 40, friction: 12 },
   });
 
@@ -352,11 +370,13 @@ const CustomContent = () => {
   // 전달된 키보드 데이터를 가져옵니다.
   const keyboardData = location.state || {};
 
-  const { keyboardType, keyboardText } = location.state || { keyboardType: "100", keyboardText: "No selection" };
-
+  const { keyboardType, keyboardText } = location.state || {
+    keyboardType: "100",
+    keyboardText: "No selection",
+  };
 
   // 전달된 데이터를 사용하여 초기 상태를 설정합니다.
-  const [activeSelection, setActiveSelection] = useState('barebone');
+  const [activeSelection, setActiveSelection] = useState("barebone");
   const [showSwitch, setShowSwitch] = useState(!!keyboardData.switchColor);
   const [showKeyCap, setShowKeyCap] = useState(!!keyboardData.keycapColor);
   const [switchColorSelected, setSwitchColorSelected] = useState(!!keyboardData.switchColor);
@@ -373,63 +393,38 @@ const CustomContent = () => {
   const [selectedPattern, setSelectedPattern] = useState(keyboardData.design || null);
 
   const handlePatternClick = (pattern) => {
-    setSelectedPattern(pattern);
+    setSelectedPattern(pattern || "없음");
   };
-  
+
   const patternImages = [
     { name: "80moonrabbit", image: "1" },
     { name: "80dosirac", image: "2" },
     { name: "80leaf", image: "3" },
   ];
 
-  const email = userInfo?.email || ""; 
-
-  // Wishlist에서 저장된 데이터를 불러와 상태 설정
-  useEffect(() => {
-    const loadWishlist = async () => {
-      try {
-        const response = await axios.post(`https://port-0-edcustom-lxx5p8dd0617fae9.sel5.cloudtype.app/items/get?email=${email}`);
-        const data = response.data;
-
-        if (data) {
-          setKeycapColor(data.keycapColor || "white");
-          setSwitchColor(data.switchColor || "white");
-          setBareboneColor(data.bareboneColor || "white");
-
-          setKeycapColorSelected(!!data.keycapColor);
-          setSwitchColorSelected(!!data.switchColor);
-          setBareboneColorSelected(!!data.bareboneColor);
-
-          setShowSwitch(!!data.switchColor);
-          setShowKeyCap(!!data.keycapColor);
-        }
-      } catch (error) {
-        console.error("Error loading wishlist data:", error);
-      }
-    };
-
-    loadWishlist();
-  }, [email]);
+  const email = userInfo?.email || "";
 
   const handleSave = async () => {
     const currentTime = new Date();
     const kstOffset = 9 * 60 * 60 * 1000;
     const kstTime = new Date(currentTime.getTime() + kstOffset);
-  
-    const saveTime = kstTime.toISOString().replace('T', ' ').split('.')[0];
-  
+    const saveTime = kstTime.toISOString().replace("T", " ").split(".")[0];
+
     const saveData = {
       email,
-      saveTime,
-      bareboneColor,
-      keyboardType,
-      keycapColor,
-      design: selectedPattern || (colorMode !== "단색" ? colorMode : null),
-      switchColor,
+      savetime: saveTime, // 소문자로 변경
+      barebonecolor: bareboneColor, // 소문자로 변경
+      keyboardtype: keyboardType, // 소문자로 변경
+      keycapcolor: keycapColor, // 소문자로 변경
+      design: selectedPattern || "없음", // 패턴이 없으면 "없음"으로 설정
+      switchcolor: switchColor, // 소문자로 변경
     };
-  
+
     try {
-      const response = await axios.post("https://port-0-edcustom-lxx5p8dd0617fae9.sel5.cloudtype.app/items/save", saveData);
+      const response = await axios.post(
+        "https://port-0-edcustom-lxx5p8dd0617fae9.sel5.cloudtype.app/items/save",
+        saveData
+      );
       console.log("Save successful:", response.data);
       alert("저장이 완료되었습니다!");
     } catch (error) {
@@ -437,7 +432,7 @@ const CustomContent = () => {
       alert("저장에 실패했습니다. 다시 시도해주세요.");
     }
   };
-  
+
   const modalSpring = useSpringCss({
     opacity: showModal ? 1 : 0,
     config: { duration: 1000 },
@@ -462,22 +457,22 @@ const CustomContent = () => {
   }, []);
 
   const handleSwitchClick = () => {
-    setShowSwitch(true); 
+    setShowSwitch(true);
     setShowKeyCap(false);
-    setActiveSelection('switch');
+    setActiveSelection("switch");
   };
 
   const handleKeyCapClick = () => {
     if (showSwitch) {
       setShowKeyCap(true);
-      setActiveSelection('keycap');
+      setActiveSelection("keycap");
     } else {
       alert("먼저 스위치를 선택해주세요!");
     }
   };
 
   const handleBareboneClick = () => {
-    setActiveSelection('barebone');
+    setActiveSelection("barebone");
     setShowSwitch(false);
     setShowKeyCap(false);
   };
@@ -501,17 +496,22 @@ const CustomContent = () => {
     setColorMode(mode); // 색상 모드 상태 변경
   };
 
-  const switchColors = [
-    "red", "blue", "green", "yellow", "purple",
-  ];
+  const switchColors = ["red", "blue", "green", "yellow", "purple"];
 
   const keycapColors = [
-    "red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "gray", "black",
+    "red",
+    "blue",
+    "green",
+    "yellow",
+    "purple",
+    "orange",
+    "pink",
+    "brown",
+    "gray",
+    "black",
   ];
 
-  const bareboneColors = [
-    "gray", "silver", "black", "white", "gold",
-  ];
+  const bareboneColors = ["gray", "silver", "black", "white", "gold"];
 
   return (
     <Container>
@@ -524,17 +524,22 @@ const CustomContent = () => {
             <ReturnIcon />
             다시 시작하기
           </RightBox>
-          <PriceBtn onClick={handleSave}><HeartIcon />저장하기</PriceBtn>
+          <PriceBtn onClick={handleSave}>
+            <HeartIcon />
+            저장하기
+          </PriceBtn>
         </RightBoxContainer>
       </HeaderFrame>
-  
+
       <Frame>
         <MainFrame>
           <MainSelect>
             <SelectText
               onClick={handleBareboneClick}
-              isSelected={activeSelection === 'barebone'}
-              style={{ color: activeSelection === 'barebone' ? "#6d8cff" : "black" }} 
+              isSelected={activeSelection === "barebone"}
+              style={{
+                color: activeSelection === "barebone" ? "#6d8cff" : "black",
+              }}
             >
               Barebone
               <IconWrapper>
@@ -543,21 +548,28 @@ const CustomContent = () => {
             </SelectText>
             <SelectText
               onClick={handleSwitchClick}
-              isSelected={activeSelection === 'switch'} 
-              style={{ color: activeSelection === 'switch' ? "#6d8cff" : "black" }} 
+              isSelected={activeSelection === "switch"}
+              style={{
+                color: activeSelection === "switch" ? "#6d8cff" : "black",
+              }}
             >
               Switch
               <IconWrapper>
                 {switchColorSelected ? <CheckIcon /> : <DotIcon />}
               </IconWrapper>
             </SelectText>
-  
+
             <SelectText
               onClick={handleKeyCapClick}
-              isSelected={activeSelection === 'keycap'}
+              isSelected={activeSelection === "keycap"}
               style={{
-                color: activeSelection === 'keycap' ? "#6d8cff" : (showSwitch ? "black" : "#ccc"),
-              }} 
+                color:
+                  activeSelection === "keycap"
+                    ? "#6d8cff"
+                    : showSwitch
+                    ? "black"
+                    : "#ccc",
+              }}
             >
               KeyCap
               <IconWrapper>
@@ -565,7 +577,7 @@ const CustomContent = () => {
               </IconWrapper>
             </SelectText>
           </MainSelect>
-  
+
           {showModal && (
             <ModalOverlay style={modalSpring}>
               <Modal>
@@ -574,67 +586,66 @@ const CustomContent = () => {
               </Modal>
             </ModalOverlay>
           )}
-  
-  <Canvas
-  camera={{ position: [10, 100, 100], fov: 60 }}
-  style={{ width: "100%", height: "100%" }}
-  shadows
->
-  <OrbitControls
-    ref={controlsRef}
-    target={[10, 0, 0]}
-    enablePan={false}
-    enableZoom={true}
-    zoomSpeed={0.15}
-    minDistance={110}
-    maxDistance={130}
-    enableRotate={true}
-    rotateSpeed={0.3}
-    minPolarAngle={0}
-    maxPolarAngle={Math.PI / 2}
-  />
 
-  {/* Adjusted ambient light */}
-  <ambientLight intensity={1.0} />
+          <Canvas
+            camera={{ position: [10, 100, 100], fov: 60 }}
+            style={{ width: "100%", height: "100%" }}
+            shadows
+          >
+            <OrbitControls
+              ref={controlsRef}
+              target={[10, 0, 0]}
+              enablePan={false}
+              enableZoom={true}
+              zoomSpeed={0.15}
+              minDistance={110}
+              maxDistance={130}
+              enableRotate={true}
+              rotateSpeed={0.3}
+              minPolarAngle={0}
+              maxPolarAngle={Math.PI / 2}
+            />
 
-  {/* Adjusted directional lights */}
-  <directionalLight
-    position={[30, 50, 30]}
-    intensity={1.5}
-    castShadow
-    shadow-mapSize-width={2048}
-    shadow-mapSize-height={2048}
-    shadow-camera-far={50}
-    shadow-camera-left={-20}
-    shadow-camera-right={20}
-    shadow-camera-top={20}
-    shadow-camera-bottom={-20}
-  />
+            {/* Adjusted ambient light */}
+            <ambientLight intensity={1.0} />
 
-  <directionalLight position={[-30, 50, -30]} intensity={1.2} />
-  <directionalLight position={[0, 30, -50]} intensity={1.0} />
+            {/* Adjusted directional lights */}
+            <directionalLight
+              position={[30, 50, 30]}
+              intensity={1.5}
+              castShadow
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+              shadow-camera-far={50}
+              shadow-camera-left={-20}
+              shadow-camera-right={20}
+              shadow-camera-top={20}
+              shadow-camera-bottom={-20}
+            />
 
-  {/* Reduced intensity of point lights */}
-  <pointLight position={[0, 50, 0]} intensity={1.0} />
-  <pointLight position={[-50, 50, 50]} intensity={1.0} />
-  <pointLight position={[50, 50, -50]} intensity={1.0} />
+            <directionalLight position={[-30, 50, -30]} intensity={1.2} />
+            <directionalLight position={[0, 30, -50]} intensity={1.0} />
 
-  <Model
-    showSwitch={showSwitch}
-    showKeyCap={showKeyCap}
-    controlsRef={controlsRef}
-    keycapColor={keycapColor}
-    switchColor={switchColor}
-    bareboneColor={bareboneColor}
-    keyboardType={keyboardType}
-    selectedPattern={selectedPattern} // Pass selectedPattern
-  />
-</Canvas>
+            {/* Reduced intensity of point lights */}
+            <pointLight position={[0, 50, 0]} intensity={1.0} />
+            <pointLight position={[-50, 50, 50]} intensity={1.0} />
+            <pointLight position={[50, 50, -50]} intensity={1.0} />
 
+            <Model
+              showSwitch={showSwitch}
+              showKeyCap={showKeyCap}
+              controlsRef={controlsRef}
+              keycapColor={keycapColor}
+              switchColor={switchColor}
+              bareboneColor={bareboneColor}
+              keyboardType={keyboardType}
+              selectedPattern={selectedPattern} // Pass selectedPattern
+            />
+          </Canvas>
         </MainFrame>
-  
+
         {/* 80% 배열 키보드일 때만 "단색", "패턴" 옵션을 표시 */}
-        {keyboardType === "80" && activeSelection === 'keycap' && (
+        {keyboardType === "80" && activeSelection === "keycap" && (
           <ColorModeSelect>
             {["단색", "패턴"].map((mode) => (
               <ModeText
@@ -647,9 +658,9 @@ const CustomContent = () => {
             ))}
           </ColorModeSelect>
         )}
-  
+
         {/* 조건부로 ColorFrame을 렌더링 */}
-        {activeSelection === 'barebone' && (
+        {activeSelection === "barebone" && (
           <ColorFrame>
             {bareboneColors.map((color, index) => (
               <ColorBox
@@ -660,8 +671,8 @@ const CustomContent = () => {
             ))}
           </ColorFrame>
         )}
-  
-        {activeSelection === 'switch' && (
+
+        {activeSelection === "switch" && (
           <ColorFrame>
             {switchColors.map((color, index) => (
               <ColorBox
@@ -672,38 +683,37 @@ const CustomContent = () => {
             ))}
           </ColorFrame>
         )}
-  
-  {activeSelection === 'keycap' && (
-      <ColorFrame>
-        {colorMode === "단색" &&
-          keycapColors.map((color, index) => (
-            <ColorBox
-              key={index}
-              style={{ backgroundColor: color }}
-              onClick={() => handleKeycapColorChange(color)}
-            />
-          ))}
-        
-        {colorMode === "패턴" &&
-          patternImages.map((pattern, index) => (
-            <ColorBox
-            key={index}
-            style={{
-              backgroundImage: `url(/images/${pattern.image}.png)`,
-              backgroundSize: "100% 100%",
-              width: "120px",
-              margin: "0 20px"
-            }}
-            onClick={() => handlePatternClick(pattern.name)}
-          />
-          
-          ))}
-      </ColorFrame>
-    )}
+
+        {activeSelection === "keycap" && (
+          <ColorFrame>
+            {colorMode === "단색" &&
+              keycapColors.map((color, index) => (
+                <ColorBox
+                  key={index}
+                  style={{ backgroundColor: color }}
+                  onClick={() => handleKeycapColorChange(color)}
+                />
+              ))}
+
+            {colorMode === "패턴" &&
+              patternImages.map((pattern, index) => (
+                <ColorBox
+                  key={index}
+                  style={{
+                    backgroundImage: `url(/images/${pattern.image}.png)`,
+                    backgroundSize: "100% 100%",
+                    width: "120px",
+                    margin: "0 20px",
+                  }}
+                  onClick={() => handlePatternClick(pattern.name)}
+                />
+              ))}
+          </ColorFrame>
+        )}
       </Frame>
     </Container>
   );
-};  
+};
 
 const Custom = () => {
   return (

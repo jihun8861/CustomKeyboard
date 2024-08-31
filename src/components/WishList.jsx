@@ -93,21 +93,18 @@ const DesignCheckBtn = styled.button`
 
 const WishList = () => {
   const [savedKeyboards, setSavedKeyboards] = useState([]);
-  const { userInfo } = useUser(); // 현재 사용자 정보 가져오기
+  const { userInfo } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchKeyboards = async () => {
-      if (userInfo && userInfo.email) { // userInfo가 존재할 때만 요청
+      if (userInfo && userInfo.email) { 
         try {
           const response = await axios.post("https://port-0-edcustom-lxx5p8dd0617fae9.sel5.cloudtype.app/items/find", {
-            email: userInfo.email,  // Context에서 가져온 이메일 사용
+            email: userInfo.email,
           });
 
-          // 데이터 최신순으로 정렬
           const sortedKeyboards = response.data.sort((a, b) => new Date(b.savetime) - new Date(a.savetime));
-
-          // 데이터 설정
           setSavedKeyboards(sortedKeyboards);
         } catch (error) {
           console.error("Failed to fetch saved keyboards:", error);
@@ -118,12 +115,19 @@ const WishList = () => {
     fetchKeyboards();
   }, [userInfo]);
 
-  const handleDesignCheck = (keyboard) => {
-    console.log("Navigating to Custom with keyboard data:", keyboard); // 데이터 로그 확인
-    navigate("/custom", { state: keyboard }); 
-  };
+const handleDesignCheck = (keyboard) => {
+  navigate("/custom", {
+    state: {
+      keyboardType: keyboard.keyboardtype,
+      keycapColor: keyboard.keycapcolor,
+      bareboneColor: keyboard.barebonecolor,
+      switchColor: keyboard.switchcolor,
+      selectedPattern: keyboard.design,
+      keyboardText: `${keyboard.keyboardtype}% 배열 키보드`
+    }
+  });
+};
   
-
   return (
     <Container>
       <MiniTextFrame>
@@ -137,8 +141,8 @@ const WishList = () => {
               <HeartIcon />
             </ImageFrame>
             <InfoFrame>
-              <h2>{keyboard.keyboardtype}% 배열 키보드</h2> {/* 서버에서 받아온 필드 이름 사용 */}
-              <p>저장된 시각: {new Date(keyboard.savetime).toLocaleString()}</p> {/* 날짜를 읽기 쉽게 변환 */}
+              <h2>{keyboard.keyboardtype}% 배열 키보드</h2>
+              <p>저장된 시각: {new Date(keyboard.savetime).toLocaleString()}</p>
               <p>베어본 색상: {keyboard.barebonecolor}</p>
               <p>키캡 색상: {keyboard.keycapcolor}</p>
               <p>스위치 색상: {keyboard.switchcolor}</p>

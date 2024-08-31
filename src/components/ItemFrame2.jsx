@@ -57,13 +57,6 @@ const ItemFrame2 = ({ image, hoverImage, text, price, text2, color, details }) =
     });
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("ko-KR", {
-      currency: "KRW",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
-
   return (
     <Container onClick={handleClick}>
       <ImageFrame2
@@ -74,7 +67,6 @@ const ItemFrame2 = ({ image, hoverImage, text, price, text2, color, details }) =
       <TextFrame2>
         <Text2>{text}</Text2>
       </TextFrame2>
-      <PriceFrame>{formatPrice(price)}원</PriceFrame>
     </Container>
   );
 };

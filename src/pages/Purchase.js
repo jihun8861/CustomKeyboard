@@ -142,13 +142,7 @@ const PurchaseContent = () => {
           <TextFrame>
             <Title>{text}</Title>
             <PriceFrame>
-            <Price>
-              {new Intl.NumberFormat("ko-KR", {
-                currency: "KRW",
-                minimumFractionDigits: 0,
-              }).format(price)}
-              원
-            </Price>
+            
             <ShareIcon/>
             </PriceFrame>
             <Line />
@@ -159,19 +153,7 @@ const PurchaseContent = () => {
                   <div key={index}>- {detail}</div>
                 ))}
             </DetailFrame>
-            <ServiceFrame>
-              <ServiceItem>
-                <ServiceLabel>배송방법</ServiceLabel>
-                <ServiceValue>택배</ServiceValue>
-              </ServiceItem>
-              <ServiceItem>
-                <ServiceLabel>배송비</ServiceLabel>
-                <ServiceValue>3,000원</ServiceValue>
-              </ServiceItem>
-            </ServiceFrame>
-            <BtnFrame>
-              <PurchaseBtn>구매하기</PurchaseBtn>
-            </BtnFrame>
+           
           </TextFrame>
         </FrameWrapper>
       </Frame>
