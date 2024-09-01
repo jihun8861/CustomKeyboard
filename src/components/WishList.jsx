@@ -115,18 +115,20 @@ const WishList = () => {
     fetchKeyboards();
   }, [userInfo]);
 
-const handleDesignCheck = (keyboard) => {
-  navigate("/custom", {
-    state: {
-      keyboardType: keyboard.keyboardtype,
-      keycapColor: keyboard.keycapcolor,
-      bareboneColor: keyboard.barebonecolor,
-      switchColor: keyboard.switchcolor,
-      selectedPattern: keyboard.design,
-      keyboardText: `${keyboard.keyboardtype}% 배열 키보드`
-    }
-  });
-};
+  const handleDesignCheck = (keyboard) => {
+    const pattern = keyboard.design === "없음" ? null : keyboard.design;
+    console.log('Selected Pattern:', pattern); // 확인용 로그
+    navigate("/custom", {
+      state: {
+        keyboardType: keyboard.keyboardtype,
+        keycapColor: keyboard.keycapcolor,
+        bareboneColor: keyboard.barebonecolor,
+        switchColor: keyboard.switchcolor,
+        selectedPattern: pattern || "없음",  // 기본값을 지정해서 문제를 방지
+        keyboardText: `${keyboard.keyboardtype}% 배열 키보드`,
+      },
+    });
+  };
   
   return (
     <Container>

@@ -254,19 +254,19 @@ const Model = ({
   );
 
   // keycap1Path는 기존 로직 그대로 유지
-  const keycap1Path = selectedPattern
-    ? `/models/${keyboardType}keyboard/${selectedPattern}.glb`
-    : `/models/${keyboardType}keyboard/${keyboardType}keycaps2.glb`;
+  const keycap1Path = selectedPattern && selectedPattern !== "없음"
+  ? `/models/${keyboardType}keyboard/${selectedPattern}.glb`
+  : `/models/${keyboardType}keyboard/${keyboardType}keycaps2.glb`;
 
   const { scene: keycap1Scene } = useGLTF(keycap1Path);
 
   // selectedPattern이 '80moonrabbit'이면 '80moonrabbit1.glb'를 로드하도록 수정
-  const keycap2Path =
-    selectedPattern === "80moonrabbit"
-      ? `/models/${keyboardType}keyboard/80moonrabbit1.glb`
-      : `/models/${keyboardType}keyboard/${keyboardType}keycaps1.glb`;
+  const keycap2Path = selectedPattern === "80moonrabbit"
+  ? `/models/${keyboardType}keyboard/80moonrabbit1.glb`
+  : `/models/${keyboardType}keyboard/${keyboardType}keycaps1.glb`;
 
   const { scene: keycap2Scene } = useGLTF(keycap2Path);
+
 
   const groupRef = useRef();
 
@@ -327,14 +327,6 @@ const Model = ({
     config: { mass: 0.5, tension: 40, friction: 12 },
   });
 
-  // Apply color to partial keycaps
-  useEffect(() => {
-    keycap1Scene.traverse((child) => {
-      if (child.isMesh) {
-        child.material.color.set(keycapColor);
-      }
-    });
-  }, [keycapColor, selectedPattern]);
 
   useEffect(() => {
     switch2Scene.traverse((child) => {
@@ -344,6 +336,16 @@ const Model = ({
     });
   }, [switchColor]);
 
+    // Apply color to partial keycaps
+    useEffect(() => {
+      keycap1Scene.traverse((child) => {
+        if (child.isMesh) {
+          child.material.color.set(keycapColor);
+        }
+      });
+    }, [keycapColor, selectedPattern]);
+  
+  
   return (
     <group ref={groupRef} position={[-3, 0, 0]}>
       <primitive object={bareboneScene} />
@@ -372,7 +374,7 @@ const CustomContent = () => {
 
   const { keyboardType, keyboardText } = location.state || {
     keyboardType: "100",
-    keyboardText: "No selection",
+    keyboardText: "No selection", 
   };
 
   // 전달된 데이터를 사용하여 초기 상태를 설정합니다.
@@ -390,11 +392,11 @@ const CustomContent = () => {
   const [keycapColor, setKeycapColor] = useState(keyboardData.keycapColor || "white");
   const [switchColor, setSwitchColor] = useState(keyboardData.switchColor || "white");
   const [bareboneColor, setBareboneColor] = useState(keyboardData.bareboneColor || "white");
-  const [selectedPattern, setSelectedPattern] = useState(keyboardData.design || null);
+  const [selectedPattern, setSelectedPattern] = useState(keyboardData.selectedPattern || null);
 
   const handlePatternClick = (pattern) => {
     setSelectedPattern(pattern || "없음");
-  };
+  };  
 
   const patternImages = [
     { name: "80moonrabbit", image: "1" },

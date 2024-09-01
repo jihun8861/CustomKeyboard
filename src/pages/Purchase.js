@@ -142,8 +142,6 @@ const PurchaseContent = () => {
           <TextFrame>
             <Title>{text}</Title>
             <PriceFrame>
-            
-            <ShareIcon/>
             </PriceFrame>
             <Line />
             <Title2 color={color}>{text2}</Title2>
